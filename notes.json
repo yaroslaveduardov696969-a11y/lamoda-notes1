@@ -2,9 +2,9 @@
   {
     "id": "mwxpgii2319xzh",
     "title": "Статусы ",
-    "content": "Создан - (new)\nОжидает подтверждения - (new to be confirmed)\nЗавис - (buffered)\nПодтвержден - exportable\nСобирается на складе (заказы lamoda/Market Place) - (exported (заказы lamoda)/ Sent to WH (только для Market Place)\nСобран на складе - (ready for shipment)\nПередан в службу доставки - (shipped)\nПередан в доставку XDC(партнёр) - given to delivery\nЗаказ прибыл на транзитный склад - (arrived to twh)\nПередан в доставку LME(наша) - (Left TWH)\nОтправлен обратно партнеру отображается только в заказах FBS (Crossdocking) партнеров - send to partner\nВыдан торговому представителю - (in delivery)\nДоставлен в ПВЗ - (on shelf)\nДоставлен - (delivered)\n",
+    "content": "Создан - (new)\nОжидает подтверждения - (new to be confirmed)\nЗавис - (buffered)\nПодтвержден - exportable\nСобирается на складе (заказы lamoda/Market Place) - (exported (заказы lamoda)/ Sent to WH (только для Market Place)\nСобран на складе - (ready for shipment)\nПередан в службу доставки - (shipped)\nПередан в доставку XDC(партнёр) - given to delivery\nЗаказ прибыл на транзитный склад - (arrived to twh)\nПередан в доставку LME(наша) - (Left TWH)\nОтправлен обратно партнеру отображается только в заказах FBS (Crossdocking) партнеров - send to partner\nВыдан торговому представителю - (in delivery)\nДоставлен в ПВЗ - (on shelf)\nДоставлен - (delivered/)\n",
     "pinned": false,
-    "updatedAt": "2026-11-26T15:31:04.950Z"
+    "updatedAt": "2026-11-26T15:31:39.061Z"
   },
   {
     "id": "mwxpd8smqe4o5t",

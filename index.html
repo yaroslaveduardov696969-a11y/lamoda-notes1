@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Ламода</title>
 <style>
-  /* ---------- Темы ---------- */
   :root,
   [data-theme="light"] {
     --bg: #eaf2fb;
@@ -52,14 +51,9 @@
     overflow-x: hidden;
   }
 
-  /* ---------- Звёздное небо (CSS) ---------- */
   .stars, .stars2, .stars3 {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    opacity: var(--star-opacity);
-    transition: opacity .3s;
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    opacity: var(--star-opacity); transition: opacity .3s;
   }
   .stars {
     background-image:
@@ -73,8 +67,7 @@
       radial-gradient(1px 1px at 450px 140px, #fff, transparent),
       radial-gradient(1px 1px at 520px 20px, #fff, transparent),
       radial-gradient(1px 1px at 600px 180px, #fff, transparent);
-    background-repeat: repeat;
-    background-size: 650px 200px;
+    background-repeat: repeat; background-size: 650px 200px;
     animation: twinkle 4s ease-in-out infinite alternate;
   }
   .stars2 {
@@ -84,8 +77,7 @@
       radial-gradient(1.5px 1.5px at 350px 70px, #cfe8ff, transparent),
       radial-gradient(1.5px 1.5px at 500px 170px, #cfe8ff, transparent),
       radial-gradient(1.5px 1.5px at 650px 30px, #cfe8ff, transparent);
-    background-repeat: repeat;
-    background-size: 750px 220px;
+    background-repeat: repeat; background-size: 750px 220px;
     animation: twinkle 6s ease-in-out infinite alternate-reverse;
   }
   .stars3 {
@@ -93,8 +85,7 @@
       radial-gradient(2px 2px at 120px 90px, #ffffff, transparent),
       radial-gradient(2px 2px at 420px 150px, #ffffff, transparent),
       radial-gradient(2px 2px at 700px 40px, #ffffff, transparent);
-    background-repeat: repeat;
-    background-size: 900px 260px;
+    background-repeat: repeat; background-size: 900px 260px;
     animation: twinkle 8s ease-in-out infinite alternate;
   }
   @keyframes twinkle {
@@ -102,17 +93,16 @@
     100% { opacity: var(--star-opacity); }
   }
 
-  /* ---------- Шапка ---------- */
   header {
     position: sticky; top: 0; z-index: 10;
     background: var(--surface);
     border-bottom: 1px solid var(--border);
     padding: .75rem 1.5rem;
-    display: flex; flex-wrap: wrap; gap: .75rem; align-items: center;
+    display: flex; flex-wrap: wrap; gap: .5rem; align-items: center;
     box-shadow: var(--shadow);
   }
-  .logo { font-size: 1.25rem; font-weight: 700; letter-spacing: -.02em; margin-right: .5rem; }
-  .search-wrap { display: flex; gap: .5rem; flex: 1; min-width: 260px; }
+  .logo { font-size: 1.25rem; font-weight: 700; letter-spacing: -.02em; margin-right: .25rem; }
+  .search-wrap { display: flex; gap: .5rem; flex: 1; min-width: 240px; }
   .search-wrap input {
     flex: 1; padding: .5rem .75rem;
     border: 1px solid var(--border); border-radius: 8px;
@@ -126,6 +116,14 @@
     background: var(--surface-2); color: var(--text);
     font-size: .9rem; cursor: pointer;
   }
+  .token-wrap { display: flex; gap: .25rem; align-items: center; }
+  .token-wrap input {
+    width: 150px; padding: .4rem .6rem;
+    border: 1px solid var(--border); border-radius: 8px;
+    background: var(--surface-2); color: var(--text);
+    font-size: .82rem; outline: none;
+  }
+  .token-wrap input:focus { border-color: var(--accent); }
   .btn {
     padding: .5rem .9rem; border-radius: 8px; border: none;
     background: var(--accent); color: #fff;
@@ -133,6 +131,7 @@
     transition: background .15s;
   }
   .btn:hover { background: var(--accent-hover); }
+  .btn.small { padding: .35rem .6rem; font-size: .8rem; }
   .icon-btn {
     width: 36px; height: 36px; padding: 0;
     display: inline-flex; align-items: center; justify-content: center;
@@ -143,7 +142,6 @@
   }
   .icon-btn:hover { background: var(--border); }
 
-  /* ---------- Контент ---------- */
   main { position: relative; z-index: 1; padding: 1.25rem 1.5rem 3rem; max-width: 1280px; margin: 0 auto; }
   h2 {
     font-size: .95rem; font-weight: 600; color: var(--text-muted);
@@ -157,7 +155,6 @@
     gap: 1rem;
   }
 
-  /* ---------- Карточка ---------- */
   .note-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -215,7 +212,6 @@
   mark { background: var(--mark); color: inherit; padding: 0 2px; border-radius: 3px; }
   .empty { color: var(--text-muted); font-style: italic; font-size: .9rem; padding: .5rem 0; }
 
-  /* ---------- Toast ---------- */
   .toast {
     position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(120%);
     background: var(--surface); color: var(--text);
@@ -226,7 +222,6 @@
   }
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-  /* ---------- Статус-бар GitHub ---------- */
   .status-bar {
     position: fixed; top: .5rem; right: .5rem; z-index: 50;
     font-size: .75rem; color: var(--text-muted);
@@ -236,10 +231,11 @@
   }
   .status-bar.show { display: block; }
 
-  /* ---------- Адаптив ---------- */
-  @media (max-width: 640px) {
+  @media (max-width: 720px) {
     header { padding: .6rem 1rem; }
     .search-wrap { order: 3; flex-basis: 100%; }
+    .token-wrap { order: 2; flex-basis: 100%; }
+    .token-wrap input { flex: 1; width: auto; }
     main { padding: 1rem; }
     .notes-grid { grid-template-columns: 1fr; }
   }
@@ -247,16 +243,15 @@
 </head>
 <body>
 
-<!-- Звёздное небо -->
 <div class="stars"></div>
 <div class="stars2"></div>
 <div class="stars3"></div>
 
-<!-- Статус-бар GitHub -->
 <div class="status-bar" id="statusBar"></div>
 
 <header>
   <div class="logo">Ламода</div>
+
   <div class="search-wrap">
     <input id="searchInput" type="text" placeholder="Поиск..." />
     <select id="searchField">
@@ -265,6 +260,13 @@
       <option value="content">Только текст</option>
     </select>
   </div>
+
+  <div class="token-wrap">
+    <input id="tokenInput" type="password" placeholder="GitHub Token" autocomplete="off" />
+    <button class="btn small" id="tokenSaveBtn" title="Сохранить токен в этом браузере">Сохранить</button>
+    <button class="icon-btn" id="tokenClearBtn" title="Забыть токен">✕</button>
+  </div>
+
   <button class="icon-btn" id="themeBtn" title="Тема">🌙</button>
   <button class="btn" id="newBtn">+ Новая</button>
 </header>
@@ -284,21 +286,24 @@
 
 <script>
 /* =========================================================
-   КОНФИГУРАЦИЯ GITHUB — ЗАМЕНИТЕ НА СВОИ ЗНАЧЕНИЯ
+   КОНФИГУРАЦИЯ GITHUB
    ========================================================= */
 const GITHUB_OWNER  = 'yaroslaveduardov696969-a11y';
 const GITHUB_REPO   = 'lamoda-notes1';
-const GITHUB_TOKEN  = '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'; // вставьте сюда ваш токен ghp_...
 const GITHUB_BRANCH = 'main';
 const GITHUB_FILE_PATH = 'notes.json';
 
 const GITHUB_API_URL =
   `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_FILE_PATH}`;
 
+/* Ключи localStorage */
+const THEME_KEY = 'lamoda_theme';
+const TOKEN_KEY = 'lamoda_gh_token';
+
 /* =========================================================
-   ДИАГНОСТИКА: проверяем, что все элементы на месте
+   ДИАГНОСТИКА
    ========================================================= */
-['searchInput','searchField','newBtn','pinnedList','notesList','toast','themeBtn','statusBar']
+['searchInput','searchField','newBtn','pinnedList','notesList','toast','themeBtn','statusBar','tokenInput','tokenSaveBtn','tokenClearBtn']
   .forEach(id => {
     if (!document.getElementById(id)) console.warn('В HTML отсутствует #' + id);
   });
@@ -311,8 +316,6 @@ let searchQuery = '';
 let searchField = 'all';
 let editingId = null;
 let saveInFlight = false;
-
-const THEME_KEY = 'lamoda_theme';
 
 /* =========================================================
    УТИЛИТЫ
@@ -354,30 +357,86 @@ function setStatus(msg) {
   el.textContent = msg;
   el.classList.add('show');
   clearTimeout(statusTimer);
-  statusTimer = setTimeout(() => el.classList.remove('show'), 3000);
+  statusTimer = setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+/* =========================================================
+   ТОКЕН: чтение/сохранение/очистка (только localStorage браузера)
+   ========================================================= */
+function getToken() {
+  return (localStorage.getItem(TOKEN_KEY) || '').trim();
+}
+function setToken(token) {
+  if (token && token.trim()) {
+    localStorage.setItem(TOKEN_KEY, token.trim());
+  } else {
+    localStorage.removeItem(TOKEN_KEY);
+  }
+}
+
+const tokenInput = document.getElementById('tokenInput');
+const tokenSaveBtn = document.getElementById('tokenSaveBtn');
+const tokenClearBtn = document.getElementById('tokenClearBtn');
+
+/* При загрузке подставляем сохранённый токен в поле */
+if (tokenInput) {
+  tokenInput.value = getToken();
+}
+
+if (tokenSaveBtn) {
+  tokenSaveBtn.addEventListener('click', async () => {
+    const t = (tokenInput.value || '').trim();
+    if (!t) {
+      showToast('Введите токен');
+      return;
+    }
+    setToken(t);
+    setStatus('Токен сохранён в браузере');
+    // Пробуем перезагрузить заметки с новым токеном
+    const loaded = await loadNotesFromGitHub();
+    if (loaded !== null) {
+      notes = loaded.length ? loaded : notes;
+      render();
+    }
+  });
+}
+
+if (tokenClearBtn) {
+  tokenClearBtn.addEventListener('click', () => {
+    setToken('');
+    if (tokenInput) tokenInput.value = '';
+    showToast('Токен удалён из браузера');
+    setStatus('Токен удалён');
+  });
 }
 
 /* =========================================================
    GITHUB API: ЗАГРУЗКА И СОХРАНЕНИЕ
    ========================================================= */
 async function loadNotesFromGitHub() {
-  if (!GITHUB_TOKEN || GITHUB_TOKEN.trim() === '') {
-    setStatus('Токен не указан');
+  const token = getToken();
+  if (!token) {
+    setStatus('Токен не указан — работаем локально');
     return [];
   }
   setStatus('Загрузка заметок...');
   try {
     const res = await fetch(GITHUB_API_URL, {
       headers: {
-        'Authorization': `Bearer ${GITHUB_TOKEN}`,
+        'Authorization': `Bearer ${token}`,
         'Accept': 'application/vnd.github.v3+json',
       },
       cache: 'no-store',
     });
 
     if (res.status === 404) {
-      setStatus('notes.json не найден — будет создан');
+      setStatus('notes.json не найден — будет создан при сохранении');
       return [];
+    }
+    if (res.status === 401) {
+      setStatus('Токен не принят GitHub (401)');
+      showToast('Токен неверный или отозван');
+      return null;
     }
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
@@ -396,8 +455,9 @@ async function loadNotesFromGitHub() {
 }
 
 async function saveNotesToGitHub() {
-  if (!GITHUB_TOKEN || GITHUB_TOKEN.trim() === '') {
-    setStatus('Токен не указан — сохранение невозможно');
+  const token = getToken();
+  if (!token) {
+    setStatus('Токен не указан — изменения только локально');
     return;
   }
   if (saveInFlight) { saveNotesToGitHub._again = true; return; }
@@ -408,7 +468,7 @@ async function saveNotesToGitHub() {
     let sha = null;
     const getRes = await fetch(GITHUB_API_URL, {
       headers: {
-        'Authorization': `Bearer ${GITHUB_TOKEN}`,
+        'Authorization': `Bearer ${token}`,
         'Accept': 'application/vnd.github.v3+json',
       },
       cache: 'no-store',
@@ -416,6 +476,8 @@ async function saveNotesToGitHub() {
     if (getRes.ok) {
       const cur = await getRes.json();
       sha = cur.sha;
+    } else if (getRes.status === 401) {
+      throw new Error('401 — токен не принят');
     } else if (getRes.status !== 404) {
       throw new Error(`GET SHA: HTTP ${getRes.status}`);
     }
@@ -433,7 +495,7 @@ async function saveNotesToGitHub() {
     const putRes = await fetch(GITHUB_API_URL, {
       method: 'PUT',
       headers: {
-        'Authorization': `Bearer ${GITHUB_TOKEN}`,
+        'Authorization': `Bearer ${token}`,
         'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json',
       },
@@ -442,6 +504,7 @@ async function saveNotesToGitHub() {
 
     if (!putRes.ok) {
       const err = await putRes.json().catch(() => ({}));
+      if (putRes.status === 401) throw new Error('401 — токен не принят');
       throw new Error(`PUT: HTTP ${putRes.status} ${err.message || ''}`);
     }
 
@@ -676,11 +739,11 @@ if (themeBtn) {
     notes = [{
       id: uid(),
       title: 'Добро пожаловать в Ламоду',
-      content: 'Это ваша первая заметка. Редактируйте прямо здесь — изменения сохраняются в GitHub автоматически. Закрепить можно до 3 заметок.',
+      content: 'Это ваша первая заметка. Если хотите синхронизацию с GitHub — введите токен в шапке и нажмите «Сохранить». Без токена изменения остаются только в этом браузере.',
       pinned: true,
       updatedAt: nowISO(),
     }];
-    saveNotesToGitHub();
+    // Не сохраняем в GitHub автоматически — токена может не быть
   } else {
     notes = loaded;
   }

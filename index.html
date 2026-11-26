@@ -132,6 +132,11 @@
   }
   .btn:hover { background: var(--accent-hover); }
   .btn.small { padding: .35rem .6rem; font-size: .8rem; }
+  .btn.ghost {
+    background: var(--surface-2); color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn.ghost:hover { background: var(--border); }
   .icon-btn {
     width: 36px; height: 36px; padding: 0;
     display: inline-flex; align-items: center; justify-content: center;
@@ -149,10 +154,50 @@
   }
   h2:first-child { margin-top: 0; }
 
+  /* ---------- Сетка всех заметок ---------- */
   .notes-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1rem;
+  }
+
+  /* ---------- Сетка закреплённых: 6 в ряд, компактные ---------- */
+  #pinnedList {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: .65rem;
+  }
+  #pinnedList .note-card {
+    padding: .6rem .7rem;
+    border-radius: 10px;
+    gap: .3rem;
+  }
+  #pinnedList .note-title {
+    font-size: .88rem;
+    font-weight: 600;
+    padding: .15rem;
+  }
+  #pinnedList .note-content {
+    font-size: .78rem;
+    line-height: 1.35;
+    min-height: 2.5em;
+    padding: .15rem;
+  }
+  #pinnedList .note-footer {
+    font-size: .68rem;
+    padding-top: .15rem;
+  }
+  #pinnedList .note-actions .icon-btn {
+    width: 24px; height: 24px; font-size: .8rem;
+  }
+
+  /* ---------- Блок «Все заметки» сдвинут вниз ---------- */
+  #allSection {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  #allSection h2 {
+    margin-top: 0;
   }
 
   .note-card {
@@ -190,14 +235,62 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    cursor: text;
+    cursor: pointer;
   }
-  .note-card.editing .note-content {
+
+  /* ---------- РАСШИРЕННЫЙ РЕЖИМ ---------- */
+  body.is-expanded main {
+    max-width: 100%;
+    padding: 1.5rem 2rem 3rem;
+  }
+  body.is-expanded .notes-grid { display: none; }
+  body.is-expanded h2 { display: none; }
+  body.is-expanded #allSection { margin-top: 0; padding-top: 0; border-top: none; }
+  body.is-expanded .note-card.expanded {
+    display: flex;
+    width: 100%;
+    min-height: calc(100vh - 160px);
+    border-radius: 16px;
+    padding: 1.5rem 1.75rem;
+    box-shadow: var(--shadow-hover);
+  }
+  body.is-expanded .note-card.expanded .note-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    padding: .4rem .5rem;
+  }
+  body.is-expanded .note-card.expanded .note-content {
     display: block;
     -webkit-line-clamp: unset;
     overflow: visible;
-    min-height: 8em;
+    flex: 1;
+    font-size: 1rem;
+    line-height: 1.6;
+    min-height: 40vh;
+    padding: .5rem;
   }
+  body.is-expanded .note-card.expanded .note-footer {
+    font-size: .85rem;
+    padding-top: .5rem;
+    border-top: 1px solid var(--border);
+    margin-top: .5rem;
+  }
+
+  .expand-back {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    align-self: flex-start;
+    padding: .35rem .7rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text);
+    font-size: .85rem;
+    cursor: pointer;
+    margin-bottom: .25rem;
+  }
+  .expand-back:hover { background: var(--border); }
 
   .note-footer {
     display: flex; justify-content: space-between; align-items: center;
@@ -231,6 +324,10 @@
   }
   .status-bar.show { display: block; }
 
+  /* ---------- Адаптив ---------- */
+  @media (max-width: 1100px) {
+    #pinnedList { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
   @media (max-width: 720px) {
     header { padding: .6rem 1rem; }
     .search-wrap { order: 3; flex-basis: 100%; }
@@ -238,6 +335,14 @@
     .token-wrap input { flex: 1; width: auto; }
     main { padding: 1rem; }
     .notes-grid { grid-template-columns: 1fr; }
+    #pinnedList { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #allSection { margin-top: 1.75rem; padding-top: 1rem; }
+    body.is-expanded main { padding: 1rem; }
+    body.is-expanded .note-card.expanded {
+      padding: 1rem;
+      min-height: calc(100vh - 140px);
+    }
+    body.is-expanded .note-card.expanded .note-title { font-size: 1.25rem; }
   }
 </style>
 </head>
@@ -271,15 +376,17 @@
   <button class="btn" id="newBtn">+ Новая</button>
 </header>
 
-<main>
-  <section>
+<main id="main">
+  <section id="pinnedSection">
     <h2>📌 Закреплённые</h2>
     <div id="pinnedList" class="notes-grid"></div>
   </section>
-  <section>
+  <section id="allSection">
     <h2>Все заметки</h2>
     <div id="notesList" class="notes-grid"></div>
   </section>
+
+  <div id="expandedHost"></div>
 </main>
 
 <div class="toast" id="toast"></div>
@@ -296,14 +403,13 @@ const GITHUB_FILE_PATH = 'notes.json';
 const GITHUB_API_URL =
   `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_FILE_PATH}`;
 
-/* Ключи localStorage */
 const THEME_KEY = 'lamoda_theme';
 const TOKEN_KEY = 'lamoda_gh_token';
 
 /* =========================================================
    ДИАГНОСТИКА
    ========================================================= */
-['searchInput','searchField','newBtn','pinnedList','notesList','toast','themeBtn','statusBar','tokenInput','tokenSaveBtn','tokenClearBtn']
+['searchInput','searchField','newBtn','pinnedList','notesList','toast','themeBtn','statusBar','tokenInput','tokenSaveBtn','tokenClearBtn','expandedHost','pinnedSection','allSection']
   .forEach(id => {
     if (!document.getElementById(id)) console.warn('В HTML отсутствует #' + id);
   });
@@ -314,8 +420,10 @@ const TOKEN_KEY = 'lamoda_gh_token';
 let notes = [];
 let searchQuery = '';
 let searchField = 'all';
-let editingId = null;
+let expandedId = null;
 let saveInFlight = false;
+
+const MAX_PINNED = 6; // <-- лимит закреплённых
 
 /* =========================================================
    УТИЛИТЫ
@@ -361,38 +469,26 @@ function setStatus(msg) {
 }
 
 /* =========================================================
-   ТОКЕН: чтение/сохранение/очистка (только localStorage браузера)
+   ТОКЕН
    ========================================================= */
-function getToken() {
-  return (localStorage.getItem(TOKEN_KEY) || '').trim();
-}
+function getToken() { return (localStorage.getItem(TOKEN_KEY) || '').trim(); }
 function setToken(token) {
-  if (token && token.trim()) {
-    localStorage.setItem(TOKEN_KEY, token.trim());
-  } else {
-    localStorage.removeItem(TOKEN_KEY);
-  }
+  if (token && token.trim()) localStorage.setItem(TOKEN_KEY, token.trim());
+  else localStorage.removeItem(TOKEN_KEY);
 }
 
 const tokenInput = document.getElementById('tokenInput');
 const tokenSaveBtn = document.getElementById('tokenSaveBtn');
 const tokenClearBtn = document.getElementById('tokenClearBtn');
 
-/* При загрузке подставляем сохранённый токен в поле */
-if (tokenInput) {
-  tokenInput.value = getToken();
-}
+if (tokenInput) tokenInput.value = getToken();
 
 if (tokenSaveBtn) {
   tokenSaveBtn.addEventListener('click', async () => {
     const t = (tokenInput.value || '').trim();
-    if (!t) {
-      showToast('Введите токен');
-      return;
-    }
+    if (!t) { showToast('Введите токен'); return; }
     setToken(t);
     setStatus('Токен сохранён в браузере');
-    // Пробуем перезагрузить заметки с новым токеном
     const loaded = await loadNotesFromGitHub();
     if (loaded !== null) {
       notes = loaded.length ? loaded : notes;
@@ -411,14 +507,11 @@ if (tokenClearBtn) {
 }
 
 /* =========================================================
-   GITHUB API: ЗАГРУЗКА И СОХРАНЕНИЕ
+   GITHUB API
    ========================================================= */
 async function loadNotesFromGitHub() {
   const token = getToken();
-  if (!token) {
-    setStatus('Токен не указан — работаем локально');
-    return [];
-  }
+  if (!token) { setStatus('Токен не указан — работаем локально'); return []; }
   setStatus('Загрузка заметок...');
   try {
     const res = await fetch(GITHUB_API_URL, {
@@ -429,10 +522,7 @@ async function loadNotesFromGitHub() {
       cache: 'no-store',
     });
 
-    if (res.status === 404) {
-      setStatus('notes.json не найден — будет создан при сохранении');
-      return [];
-    }
+    if (res.status === 404) { setStatus('notes.json не найден — будет создан'); return []; }
     if (res.status === 401) {
       setStatus('Токен не принят GitHub (401)');
       showToast('Токен неверный или отозван');
@@ -456,10 +546,7 @@ async function loadNotesFromGitHub() {
 
 async function saveNotesToGitHub() {
   const token = getToken();
-  if (!token) {
-    setStatus('Токен не указан — изменения только локально');
-    return;
-  }
+  if (!token) { setStatus('Токен не указан — изменения только локально'); return; }
   if (saveInFlight) { saveNotesToGitHub._again = true; return; }
   saveInFlight = true;
   setStatus('Сохранение...');
@@ -473,14 +560,9 @@ async function saveNotesToGitHub() {
       },
       cache: 'no-store',
     });
-    if (getRes.ok) {
-      const cur = await getRes.json();
-      sha = cur.sha;
-    } else if (getRes.status === 401) {
-      throw new Error('401 — токен не принят');
-    } else if (getRes.status !== 404) {
-      throw new Error(`GET SHA: HTTP ${getRes.status}`);
-    }
+    if (getRes.ok) { const cur = await getRes.json(); sha = cur.sha; }
+    else if (getRes.status === 401) throw new Error('401 — токен не принят');
+    else if (getRes.status !== 404) throw new Error(`GET SHA: HTTP ${getRes.status}`);
 
     const json = JSON.stringify(notes, null, 2);
     const base64 = btoa(unescape(encodeURIComponent(json)));
@@ -527,6 +609,10 @@ async function saveNotesToGitHub() {
    ========================================================= */
 const pinnedList = document.getElementById('pinnedList');
 const notesList = document.getElementById('notesList');
+const expandedHost = document.getElementById('expandedHost');
+const pinnedSection = document.getElementById('pinnedSection');
+const allSection = document.getElementById('allSection');
+const body = document.body;
 
 function matches(note) {
   if (!searchQuery) return true;
@@ -545,24 +631,34 @@ function highlight(text, q) {
   return safe.replace(re, '<mark>$1</mark>');
 }
 
-function noteCardHTML(note, isEditing) {
+function noteCardHTML(note) {
   const q = searchQuery;
-  const showHighlight = q && !isEditing;
-  const titleHTML = showHighlight ? highlight(note.title || '', q) : escapeHtml(note.title || '');
-  const contentHTML = showHighlight ? highlight(note.content || '', q) : escapeHtml(note.content || '');
-
-  const titleBlock = isEditing
-    ? `<input class="note-title" data-id="${note.id}" data-field="title" value="${escapeHtml(note.title || '')}" placeholder="Название..." />`
-    : `<div class="note-title" data-id="${note.id}" data-field="title" tabindex="0">${titleHTML || '<span style="color:var(--text-muted)">Без названия</span>'}</div>`;
-
-  const contentBlock = isEditing
-    ? `<textarea class="note-content" data-id="${note.id}" data-field="content" placeholder="Текст заметки...">${escapeHtml(note.content || '')}</textarea>`
-    : `<div class="note-content" data-id="${note.id}" data-field="content" tabindex="0">${contentHTML || '<span style="color:var(--text-muted)">Пусто</span>'}</div>`;
+  const titleHTML = q ? highlight(note.title || '', q) : escapeHtml(note.title || '');
+  const contentHTML = q ? highlight(note.content || '', q) : escapeHtml(note.content || '');
 
   return `
-    <article class="note-card ${isEditing ? 'editing' : 'collapsed'}" data-id="${note.id}">
-      ${titleBlock}
-      ${contentBlock}
+    <article class="note-card collapsed" data-id="${note.id}">
+      <div class="note-title" data-id="${note.id}" data-field="title" tabindex="0">${titleHTML || '<span style="color:var(--text-muted)">Без названия</span>'}</div>
+      <div class="note-content" data-id="${note.id}" data-field="content" tabindex="0">${contentHTML || '<span style="color:var(--text-muted)">Пусто</span>'}</div>
+      <div class="note-footer">
+        <span>${formatDate(note.updatedAt)}</span>
+        <div class="note-actions">
+          <button class="icon-btn ${note.pinned ? 'pin-active' : ''}" data-action="pin" data-id="${note.id}" title="${note.pinned ? 'Открепить' : 'Закрепить'}">📌</button>
+          <button class="icon-btn del" data-action="delete" data-id="${note.id}" title="Удалить">🗑</button>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function expandedCardHTML(note) {
+  return `
+    <article class="note-card expanded" data-id="${note.id}">
+      <button class="expand-back" data-action="collapse" title="Назад (Esc)">← Назад</button>
+      <input class="note-title" data-id="${note.id}" data-field="title"
+             value="${escapeHtml(note.title || '')}" placeholder="Название..." />
+      <textarea class="note-content" data-id="${note.id}" data-field="content"
+                placeholder="Текст заметки...">${escapeHtml(note.content || '')}</textarea>
       <div class="note-footer">
         <span>${formatDate(note.updatedAt)}</span>
         <div class="note-actions">
@@ -575,102 +671,146 @@ function noteCardHTML(note, isEditing) {
 }
 
 function render() {
-  if (!pinnedList || !notesList) return;
+  if (!pinnedList || !notesList || !expandedHost) return;
+
+  if (expandedId) {
+    const note = notes.find(n => n.id === expandedId);
+    if (!note) { expandedId = null; }
+    else {
+      body.classList.add('is-expanded');
+      if (pinnedSection) pinnedSection.style.display = 'none';
+      if (allSection) allSection.style.display = 'none';
+      expandedHost.innerHTML = expandedCardHTML(note);
+      bindExpandedEvents();
+      return;
+    }
+  }
+
+  body.classList.remove('is-expanded');
+  if (pinnedSection) pinnedSection.style.display = '';
+  if (allSection) allSection.style.display = '';
+  expandedHost.innerHTML = '';
+
   const filtered = notes.filter(matches);
   const pinned = filtered.filter(n => n.pinned);
   const others = filtered.filter(n => !n.pinned);
 
   pinnedList.innerHTML = pinned.length
-    ? pinned.map(n => noteCardHTML(n, n.id === editingId)).join('')
+    ? pinned.map(noteCardHTML).join('')
     : '<p class="empty">Нет закреплённых заметок</p>';
 
   notesList.innerHTML = others.length
-    ? others.map(n => noteCardHTML(n, n.id === editingId)).join('')
+    ? others.map(noteCardHTML).join('')
     : '<p class="empty">' + (notes.length ? 'Ничего не найдено' : 'Пока нет заметок. Нажмите «+ Новая».') + '</p>';
 
-  bindEvents();
+  bindGridEvents();
 }
 
 /* =========================================================
-   СОБЫТИЯ
+   СОБЫТИЯ: сетка
    ========================================================= */
-function bindEvents() {
-  document.querySelectorAll('.note-card.collapsed .note-title, .note-card.collapsed .note-content').forEach(el => {
-    el.addEventListener('click', () => {
-      editingId = el.dataset.id;
+function bindGridEvents() {
+  document.querySelectorAll('.note-card.collapsed').forEach(card => {
+    card.addEventListener('click', e => {
+      if (e.target.closest('[data-action]')) return;
+      expandedId = card.dataset.id;
       render();
-      const card = document.querySelector(`.note-card[data-id="${editingId}"]`);
-      if (!card) return;
-      const target = card.querySelector(el.dataset.field === 'title' ? '.note-title' : '.note-content');
-      if (target) {
-        target.focus();
-        if (target.setSelectionRange) {
-          const len = target.value.length;
-          target.setSelectionRange(len, len);
-        }
-      }
     });
   });
 
-  document.querySelectorAll('.note-card.editing .note-title, .note-card.editing .note-content').forEach(el => {
-    let timer = null;
-    el.addEventListener('input', () => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        const note = notes.find(n => n.id === el.dataset.id);
-        if (!note) return;
-        note[el.dataset.field] = el.value;
-        note.updatedAt = nowISO();
-        const card = document.querySelector(`.note-card[data-id="${note.id}"]`);
-        if (card) card.querySelector('.note-footer span').textContent = formatDate(note.updatedAt);
-        saveNotesToGitHub();
-      }, 500);
-    });
-    el.addEventListener('keydown', e => {
-      if (e.key === 'Escape') { editingId = null; render(); }
-    });
-  });
-
-  document.addEventListener('click', e => {
-    if (!editingId) return;
-    const card = e.target.closest('.note-card');
-    if (!card || card.dataset.id !== editingId) {
-      editingId = null;
-      render();
-    }
-  }, { capture: true });
-
-  document.querySelectorAll('[data-action="pin"]').forEach(btn => {
+  document.querySelectorAll('.note-card.collapsed [data-action="pin"]').forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation();
-      const id = btn.dataset.id;
-      const note = notes.find(n => n.id === id);
-      if (!note) return;
-
-      if (!note.pinned && pinnedCount() >= 3) {
-        showToast('Можно закрепить не более 3 заметок');
-        return;
-      }
-      note.pinned = !note.pinned;
-      note.updatedAt = nowISO();
-      saveNotesToGitHub();
-      render();
-      showToast(note.pinned ? 'Заметка закреплена' : 'Заметка откреплена');
+      togglePin(btn.dataset.id);
     });
   });
 
-  document.querySelectorAll('[data-action="delete"]').forEach(btn => {
+  document.querySelectorAll('.note-card.collapsed [data-action="delete"]').forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation();
-      const id = btn.dataset.id;
-      if (!confirm('Удалить заметку?')) return;
-      notes = notes.filter(n => n.id !== id);
-      if (editingId === id) editingId = null;
-      saveNotesToGitHub();
-      render();
-      showToast('Заметка удалена');
+      deleteNote(btn.dataset.id);
     });
   });
+}
+
+/* =========================================================
+   СОБЫТИЯ: расширенная карточка
+   ========================================================= */
+function bindExpandedEvents() {
+  const card = expandedHost.querySelector('.note-card.expanded');
+  if (!card) return;
+  const note = notes.find(n => n.id === expandedId);
+  if (!note) return;
+
+  const backBtn = card.querySelector('[data-action="collapse"]');
+  if (backBtn) {
+    backBtn.addEventListener('click', () => {
+      expandedId = null;
+      render();
+    });
+  }
+
+  const titleEl = card.querySelector('.note-title');
+  const contentEl = card.querySelector('.note-content');
+
+  let timer = null;
+  function scheduleSave() {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      const n = notes.find(x => x.id === expandedId);
+      if (!n) return;
+      if (titleEl) n.title = titleEl.value;
+      if (contentEl) n.content = contentEl.value;
+      n.updatedAt = nowISO();
+      const footerSpan = card.querySelector('.note-footer span');
+      if (footerSpan) footerSpan.textContent = formatDate(n.updatedAt);
+      saveNotesToGitHub();
+    }, 500);
+  }
+
+  if (titleEl) titleEl.addEventListener('input', scheduleSave);
+  if (contentEl) contentEl.addEventListener('input', scheduleSave);
+
+  const pinBtn = card.querySelector('[data-action="pin"]');
+  if (pinBtn) {
+    pinBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      togglePin(expandedId);
+    });
+  }
+  const delBtn = card.querySelector('[data-action="delete"]');
+  if (delBtn) {
+    delBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      deleteNote(expandedId);
+    });
+  }
+}
+
+/* =========================================================
+   ДЕЙСТВИЯ
+   ========================================================= */
+function togglePin(id) {
+  const note = notes.find(n => n.id === id);
+  if (!note) return;
+  if (!note.pinned && pinnedCount() >= MAX_PINNED) {
+    showToast(`Можно закрепить не более ${MAX_PINNED} заметок`);
+    return;
+  }
+  note.pinned = !note.pinned;
+  note.updatedAt = nowISO();
+  saveNotesToGitHub();
+  render();
+  showToast(note.pinned ? 'Заметка закреплена' : 'Заметка откреплена');
+}
+
+function deleteNote(id) {
+  if (!confirm('Удалить заметку?')) return;
+  notes = notes.filter(n => n.id !== id);
+  if (expandedId === id) expandedId = null;
+  saveNotesToGitHub();
+  render();
+  showToast('Заметка удалена');
 }
 
 /* =========================================================
@@ -680,14 +820,15 @@ const searchInputEl = document.getElementById('searchInput');
 if (searchInputEl) {
   searchInputEl.addEventListener('input', e => {
     searchQuery = e.target.value.trim();
+    if (expandedId) expandedId = null;
     render();
   });
 }
-
 const searchFieldEl = document.getElementById('searchField');
 if (searchFieldEl) {
   searchFieldEl.addEventListener('change', e => {
     searchField = e.target.value;
+    if (expandedId) expandedId = null;
     render();
   });
 }
@@ -700,11 +841,11 @@ if (newBtnEl) {
   newBtnEl.addEventListener('click', () => {
     const note = { id: uid(), title: '', content: '', pinned: false, updatedAt: nowISO() };
     notes.unshift(note);
-    editingId = note.id;
+    expandedId = note.id;
     render();
+    const titleInput = expandedHost.querySelector('.note-title');
+    if (titleInput) titleInput.focus();
     saveNotesToGitHub();
-    const card = document.querySelector(`.note-card[data-id="${note.id}"]`);
-    card?.querySelector('.note-title')?.focus();
   });
 }
 
@@ -728,6 +869,16 @@ if (themeBtn) {
 }
 
 /* =========================================================
+   ESC — выход из расширенного режима
+   ========================================================= */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && expandedId) {
+    expandedId = null;
+    render();
+  }
+});
+
+/* =========================================================
    СТАРТ
    ========================================================= */
 (async function init() {
@@ -739,11 +890,10 @@ if (themeBtn) {
     notes = [{
       id: uid(),
       title: 'Добро пожаловать в Ламоду',
-      content: 'Это ваша первая заметка. Если хотите синхронизацию с GitHub — введите токен в шапке и нажмите «Сохранить». Без токена изменения остаются только в этом браузере.',
+      content: 'Кликните по заметке, чтобы открыть её на всю страницу. Можно закрепить до 6 заметок — они будут в первой строке компактными карточками.',
       pinned: true,
       updatedAt: nowISO(),
     }];
-    // Не сохраняем в GitHub автоматически — токена может не быть
   } else {
     notes = loaded;
   }

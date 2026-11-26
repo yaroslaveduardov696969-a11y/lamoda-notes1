@@ -2,9 +2,9 @@
   {
     "id": "mwxpgii2319xzh",
     "title": "Статусы ",
-    "content": "Создан - (new)\nОжидает подтверждения - (new to be confirmed)\nЗавис - (buffered)\nПодтвержден - exportable\nСобирается на складе (заказы lamoda/Market Place) - (exported (заказы lamoda)/ Sent to WH (только для Market Place)\nСобран на складе - (ready for shipment)\nПередан в службу доставки - (shipped)\nПередан в доставку XDC(партнёр) - given to delivery\nЗаказ прибыл на транзитный склад - (arrived to twh)\nПередан в доставку LME(наша) - (Left TWH)",
+    "content": "Создан - (new)\nОжидает подтверждения - (new to be confirmed)\nЗавис - (buffered)\nПодтвержден - exportable\nСобирается на складе (заказы lamoda/Market Place) - (exported (заказы lamoda)/ Sent to WH (только для Market Place)\nСобран на складе - (ready for shipment)\nПередан в службу доставки - (shipped)\nПередан в доставку XDC(партнёр) - given to delivery\nЗаказ прибыл на транзитный склад - (arrived to twh)\nПередан в доставку LME(наша) - (Left TWH)\n",
     "pinned": false,
-    "updatedAt": "2026-11-26T15:29:52.175Z"
+    "updatedAt": "2026-11-26T15:29:53.740Z"
   },
   {
     "id": "mwxpd8smqe4o5t",

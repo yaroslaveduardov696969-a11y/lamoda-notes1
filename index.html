@@ -21,7 +21,7 @@
     --shadow: 0 1px 3px rgba(19, 42, 68, .1);
     --shadow-hover: 0 4px 14px rgba(19, 42, 68, .16);
     --star-opacity: .2;
-    --scroll-offset: 90px; /* обновляется из JS */
+    --scroll-offset: 90px;
   }
   [data-theme="dark"] {
     --bg: #0b0b1a;
@@ -115,20 +115,32 @@
   }
   .sidebar ul { list-style: none; margin: 0; padding: 0; }
   .sidebar li { margin-bottom: .15rem; }
+  .sidebar .block-row {
+    display: flex; align-items: center; gap: .1rem;
+    border-radius: 8px;
+    padding: .1rem .2rem;
+  }
+  .sidebar .block-row:hover { background: var(--surface-2); }
   .sidebar .block-link {
-    display: flex; justify-content: space-between; align-items: center;
-    width: 100%; padding: .45rem .6rem;
+    flex: 1; display: flex; justify-content: space-between; align-items: center;
+    padding: .4rem .5rem;
     border-radius: 8px; border: none; background: transparent;
     color: var(--text); font-size: .9rem; text-align: left;
     cursor: pointer; transition: background .15s;
+    min-width: 0;
   }
-  .sidebar .block-link:hover { background: var(--surface-2); }
-  .sidebar .block-link .count { font-size: .72rem; opacity: .7; margin-left: .35rem; }
-  .sidebar .block-link .del-block {
-    background: transparent; border: none; color: inherit;
-    cursor: pointer; font-size: .85rem; opacity: .5; padding: 0 .2rem;
+  .sidebar .block-link .block-name {
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    min-width: 0;
   }
-  .sidebar .block-link .del-block:hover { opacity: 1; }
+  .sidebar .block-link .count { font-size: .72rem; opacity: .7; margin-left: .35rem; flex-shrink: 0; }
+  .sidebar .block-btn {
+    background: transparent; border: none; color: var(--text-muted);
+    cursor: pointer; font-size: .78rem; padding: .2rem .3rem;
+    border-radius: 4px; flex-shrink: 0; opacity: .55;
+  }
+  .sidebar .block-btn:hover { opacity: 1; background: var(--border); }
+  .sidebar .block-btn.del-block:hover { color: var(--danger); }
   .sidebar .add-block {
     width: 100%; margin-top: .5rem;
     padding: .45rem .6rem; border-radius: 8px;
@@ -145,7 +157,7 @@
   /* ---------- Основная зона ---------- */
   .main-wrap { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 
-  /* Шапка — grid, чтобы ничего не наползало */
+  /* Шапка — grid */
   header {
     position: sticky; top: 0; z-index: 10;
     background: var(--surface);
@@ -167,9 +179,7 @@
 
   .logo { font-size: 1.25rem; font-weight: 700; letter-spacing: -.02em; }
 
-  .search-wrap {
-    display: flex; gap: .5rem; min-width: 0;
-  }
+  .search-wrap { display: flex; gap: .5rem; min-width: 0; }
   .search-wrap input {
     flex: 1 1 auto; min-width: 0;
     padding: .5rem .75rem;
@@ -201,15 +211,11 @@
     padding: .5rem .9rem; border-radius: 8px; border: none;
     background: var(--accent); color: #fff;
     font-size: .9rem; font-weight: 500; cursor: pointer;
-    transition: background .15s;
-    white-space: nowrap;
+    transition: background .15s; white-space: nowrap;
   }
   .btn:hover { background: var(--accent-hover); }
   .btn.small { padding: .35rem .6rem; font-size: .8rem; }
-  .btn.ghost {
-    background: var(--surface-2); color: var(--text);
-    border: 1px solid var(--border);
-  }
+  .btn.ghost { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
   .btn.ghost:hover { background: var(--border); }
   .icon-btn {
     width: 36px; height: 36px; padding: 0;
@@ -217,8 +223,7 @@
     font-size: 1.1rem; border-radius: 8px;
     background: var(--surface-2); color: var(--text);
     border: 1px solid var(--border); cursor: pointer;
-    transition: background .15s, color .15s;
-    flex-shrink: 0;
+    transition: background .15s, color .15s; flex-shrink: 0;
   }
   .icon-btn:hover { background: var(--border); }
 
@@ -263,11 +268,11 @@
 
   .block-section {
     margin-bottom: 2.25rem;
+    margin-top: 1.5rem;
     scroll-margin-top: var(--scroll-offset);
   }
-  #blocksContainer > .block-section:first-child {
-    margin-top: 1.5rem;
-  }
+  .block-section:first-child { margin-top: 0; }
+
   .note-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -310,7 +315,6 @@
     padding: .1rem .4rem;
   }
 
-  /* Футер карточки — не даёт детям вылезать за границы */
   .note-footer {
     display: flex; justify-content: space-between; align-items: center;
     font-size: .78rem; color: var(--text-muted);
@@ -329,9 +333,7 @@
   }
   .note-actions {
     display: flex; gap: .25rem; align-items: center;
-    min-width: 0;
-    flex-wrap: nowrap;
-    max-width: 100%;
+    min-width: 0; flex-wrap: nowrap; max-width: 100%;
   }
   .note-actions .icon-btn { width: 30px; height: 30px; font-size: .95rem; }
   .note-actions .icon-btn.pin-active { color: var(--pin); }
@@ -341,44 +343,28 @@
     font-size: .75rem; padding: .25rem .4rem;
     border: 1px solid var(--border); border-radius: 6px;
     background: var(--surface-2); color: var(--text);
-    max-width: 120px;
-    min-width: 0;
-    flex: 0 1 auto;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    max-width: 120px; min-width: 0; flex: 0 1 auto;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
 
-  /* Компактные закреплённые: нижняя строка не вылезает */
-  #pinnedList .note-footer {
-    flex-wrap: nowrap;
-    gap: .25rem;
-    overflow: hidden;
-  }
+  #pinnedList .note-footer { flex-wrap: nowrap; gap: .25rem; overflow: hidden; }
   #pinnedList .note-footer > span {
-    flex: 1 1 auto;
-    min-width: 0;
-    font-size: .62rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    flex: 1 1 auto; min-width: 0; font-size: .62rem;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  #pinnedList .note-actions {
-    flex: 0 0 auto;
-    flex-wrap: nowrap;
-  }
-  #pinnedList .block-select {
-    max-width: 70px;
-    font-size: .62rem;
-    padding: .15rem .25rem;
-  }
-  #pinnedList .note-actions .icon-btn {
-    width: 22px; height: 22px; font-size: .75rem;
-  }
+  #pinnedList .note-actions { flex: 0 0 auto; flex-wrap: nowrap; }
+  #pinnedList .block-select { max-width: 70px; font-size: .62rem; padding: .15rem .25rem; }
+  #pinnedList .note-actions .icon-btn { width: 22px; height: 22px; font-size: .75rem; }
 
-  /* ---------- Расширенный режим ---------- */
+  /* ---------- РАСШИРЕННЫЙ РЕЖИМ: заметка на всю ширину ---------- */
   body.is-expanded .sidebar { display: none; }
-  body.is-expanded main { max-width: 100%; padding: 1.25rem 2rem 3rem; }
+  body.is-expanded .main-wrap { width: 100%; }
+  body.is-expanded main {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    padding: .75rem 1rem 1.5rem;
+  }
   body.is-expanded .notes-grid { display: none; }
   body.is-expanded h2 { display: none; }
   body.is-expanded .block-section { display: none; }
@@ -390,6 +376,9 @@
     padding: 1.25rem 1.5rem;
     box-shadow: var(--shadow-hover);
     display: flex; flex-direction: column; gap: .75rem;
+    width: 100%;
+    max-width: none;
+    min-height: calc(100vh - 120px);
   }
   .expanded-top { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
   .expanded-note .note-title {
@@ -456,7 +445,6 @@
   /* ---------- Адаптив ---------- */
   @media (max-width: 1100px) {
     #pinnedList { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-
     header {
       grid-template-columns: auto 1fr auto auto;
       grid-template-areas:
@@ -481,6 +469,7 @@
     }
     .sidebar h3 { display: none; }
     .sidebar ul { display: flex; gap: .3rem; }
+    .sidebar .block-row { padding: 0; }
     .sidebar .block-link { white-space: nowrap; padding: .35rem .6rem; font-size: .85rem; }
     .sidebar .add-block { width: auto; margin: 0; white-space: nowrap; }
     body.sidebar-collapsed aside.sidebar { height: 0; padding: 0; border-bottom: none; }
@@ -506,7 +495,7 @@
     main { padding: 1rem; }
     .notes-grid { grid-template-columns: 1fr; }
     #pinnedList { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    body.is-expanded main { padding: .75rem; }
+    body.is-expanded main { padding: .5rem; }
     .expanded-note { padding: .9rem; }
     .expanded-note .note-title { font-size: 1.2rem; }
   }
@@ -649,13 +638,12 @@ function setStatus(msg) {
 }
 
 /* =========================================================
-   ДИНАМИЧЕСКИЙ ОТСТУП ПРОКРУТКИ (--scroll-offset)
+   ДИНАМИЧЕСКИЙ ОТСТУП ПРОКРУТКИ
    ========================================================= */
 function updateScrollOffset() {
   const headerEl = document.querySelector('header');
   const sidebarEl = document.getElementById('sidebar');
   let offset = (headerEl?.offsetHeight || 0) + 10;
-  // На мобильных сайдбар горизонтальный и липкий сверху — добавляем его высоту
   if (window.innerWidth <= 820 && sidebarEl && !document.body.classList.contains('sidebar-collapsed')) {
     offset += (sidebarEl.offsetHeight || 0);
   }
@@ -710,8 +698,7 @@ function applySidebarState(collapsed) {
   if (collapsed) document.body.classList.add('sidebar-collapsed');
   else document.body.classList.remove('sidebar-collapsed');
   localStorage.setItem(SIDEBAR_KEY, collapsed ? '1' : '0');
-  // после изменения ширины/высоты сайдбара пересчитать offset
-  setTimeout(updateScrollOffset, 220); // после transition
+  setTimeout(updateScrollOffset, 220);
 }
 
 applySidebarState(localStorage.getItem(SIDEBAR_KEY) === '1');
@@ -870,7 +857,7 @@ function migrateOldNote(n) {
   });
 
 /* =========================================================
-   РЕНДЕР: боковая навигация
+   РЕНДЕР: боковая навигация (с редактированием названий)
    ========================================================= */
 const blocksListEl = document.getElementById('blocksList');
 const addBlockBtn = document.getElementById('addBlockBtn');
@@ -882,27 +869,47 @@ function renderSidebar() {
     const isUnsorted = b.id === UNSORTED_ID;
     return `
       <li>
-        <button class="block-link" data-block="${b.id}">
-          <span>${escapeHtml(b.name)} <span class="count">${count}</span></span>
-          ${isUnsorted ? '' : `<span class="del-block" data-del-block="${b.id}" title="Удалить блок">✕</span>`}
-        </button>
+        <div class="block-row">
+          <button class="block-link" data-block="${b.id}">
+            <span class="block-name">${escapeHtml(b.name)}</span>
+            <span class="count">${count}</span>
+          </button>
+          <button class="block-btn" data-rename-block="${b.id}" title="Переименовать блок">✎</button>
+          ${isUnsorted ? '' : `<button class="block-btn del-block" data-del-block="${b.id}" title="Удалить блок">✕</button>`}
+        </div>
       </li>
     `;
   }).join('');
 
   blocksListEl.querySelectorAll('.block-link').forEach(btn => {
     btn.addEventListener('click', e => {
-      if (e.target.closest('[data-del-block]')) return;
+      if (e.target.closest('[data-del-block]') || e.target.closest('[data-rename-block]')) return;
       const blockId = btn.dataset.block;
       if (expandedId) { expandedId = null; render(); }
       setTimeout(() => {
         const section = document.getElementById('block-' + blockId);
         if (!section) return;
-        // скроллим к заголовку h2 внутри секции, чтобы он был в зоне видимости
         const heading = section.querySelector('h2');
         const target = heading || section;
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 30);
+    });
+  });
+
+  blocksListEl.querySelectorAll('[data-rename-block]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const id = btn.dataset.renameBlock;
+      const block = blocks.find(b => b.id === id);
+      if (!block) return;
+      const name = prompt('Новое название блока:', block.name);
+      if (name === null) return;
+      const trimmed = name.trim();
+      if (!trimmed) { showToast('Название не может быть пустым'); return; }
+      block.name = trimmed;
+      saveToGitHub();
+      render();
+      showToast('Блок переименован');
     });
   });
 
@@ -1078,7 +1085,7 @@ function sectionCardHTML(s) {
       <div class="section-head">
         <input class="section-title" data-field="section-title" value="${escapeHtml(s.title || '')}" placeholder="Название раздела..." />
         <div class="section-actions">
-          <button class="icon-btn" data-action="copy-section" title="Копировать раздел">📋</button>
+          <button class="icon-btn" data-action="copy-section" title="Копировать текст раздела">📋</button>
           <button class="icon-btn del" data-action="delete-section" title="Удалить раздел">🗑</button>
         </div>
       </div>
@@ -1176,7 +1183,6 @@ function bindExpandedEvents(note) {
     render();
   });
 
-  // Смена блока внутри открытой заметки
   const blockSel = root.querySelector('[data-block-select]');
   if (blockSel) {
     blockSel.addEventListener('change', () => {
@@ -1191,7 +1197,6 @@ function bindExpandedEvents(note) {
     });
   }
 
-  // Закрепление в расширенном режиме
   const pinBtn = root.querySelector('[data-action="pin"]');
   if (pinBtn) {
     pinBtn.addEventListener('click', () => {
@@ -1234,13 +1239,13 @@ function bindSectionEvents(note, root) {
       const text = section.content || '';
       try {
         await navigator.clipboard.writeText(text);
-        showToast('Раздел скопирован');
+        showToast('Текст раздела скопирован');
       } catch {
         const ta = document.createElement('textarea');
         ta.value = text;
         document.body.appendChild(ta);
         ta.select();
-        try { document.execCommand('copy'); showToast('Раздел скопирован'); }
+        try { document.execCommand('copy'); showToast('Текст раздела скопирован'); }
         catch { showToast('Не удалось скопировать'); }
         document.body.removeChild(ta);
       }
@@ -1406,13 +1411,12 @@ document.addEventListener('keydown', e => {
       pinned: true,
       updatedAt: nowISO(),
       sections: [
-        { id: uid(), title: 'О сайте', content: 'Кликните по заметке, чтобы открыть её. Внутри — разделы (главы). Можно копировать раздел, искать по разделам, менять блок заметки.' },
-        { id: uid(), title: 'Блоки', content: 'Блоки — это категории заметок (Клиенты, Заказы...). Список блоков слева. Заметку можно переместить в блок через выпадающий список в карточке.' },
+        { id: uid(), title: 'О сайте', content: 'Кликните по заметке, чтобы открыть её на всю ширину. Внутри — разделы (главы). Можно копировать текст раздела, искать по разделам, менять блок заметки.' },
+        { id: uid(), title: 'Блоки', content: 'Блоки — это категории заметок (Клиенты, Заказы...). Список блоков слева. Название блока можно переименовать (кнопка ✎). Заметку можно переместить в блок через выпадающий список в карточке.' },
       ],
     }];
   }
   render();
-  // после первого рендера пересчитать offset (шапка уже отрисована)
   updateScrollOffset();
 })();
 </script>

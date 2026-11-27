@@ -63,11 +63,16 @@
       "title": "",
       "block": "unsorted",
       "pinned": false,
-      "updatedAt": "2026-11-27T12:29:39.838Z",
+      "updatedAt": "2026-11-27T12:29:44.925Z",
       "sections": [
         {
           "id": "mwyykynybkviw1",
           "title": "Основное",
+          "content": ""
+        },
+        {
+          "id": "mwyyl2l9n4xddy",
+          "title": "",
           "content": ""
         }
       ]

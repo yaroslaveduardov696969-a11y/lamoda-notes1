@@ -170,14 +170,41 @@
   .logo { font-size: 1.25rem; font-weight: 700; letter-spacing: -.02em; }
 
   .search-wrap { display: flex; gap: .5rem; min-width: 0; }
-  .search-wrap input {
-    flex: 1 1 auto; min-width: 0;
-    padding: .5rem .75rem;
+  .search-input-wrap {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+  }
+  .search-input-wrap input {
+    width: 100%;
+    padding: .5rem 2rem .5rem .75rem; /* правый отступ под крестик */
     border: 1px solid var(--border); border-radius: 8px;
     background: var(--surface-2); color: var(--text);
     font-size: .95rem; outline: none;
   }
-  .search-wrap input:focus { border-color: var(--accent); }
+  .search-input-wrap input:focus { border-color: var(--accent); }
+  .search-clear-btn {
+    position: absolute;
+    right: .35rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: .95rem;
+    line-height: 1;
+    padding: 0;
+  }
+  .search-clear-btn:hover { background: var(--border); color: var(--text); }
+  .search-clear-btn.show { display: inline-flex; }
+
   .search-wrap select {
     flex: 0 0 auto;
     padding: .5rem .6rem; border-radius: 8px;
@@ -256,15 +283,20 @@
   #pinnedList .note-footer { font-size: .68rem; padding-top: .15rem; }
   #pinnedList .note-actions .icon-btn { width: 24px; height: 24px; font-size: .8rem; }
 
+  /* Отступ между закреплёнными и первым блоком («Несортированные») */
+  #pinnedSection {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
   .block-section {
     margin-bottom: 2.25rem;
     margin-top: 1.5rem;
     scroll-margin-top: var(--scroll-offset);
   }
-  .block-section:first-child { margin-top: 0; }
-  .block-section.search-results h2 {
-    color: var(--accent);
-  }
+  .block-section:first-child { margin-top: 1.5rem; }
+  .block-section.search-results h2 { color: var(--accent); }
 
   .note-card {
     background: var(--surface);
@@ -372,6 +404,7 @@
   body.is-expanded .notes-grid { display: none; }
   body.is-expanded h2 { display: none; }
   body.is-expanded .block-section { display: none; }
+  body.is-expanded #pinnedSection { display: none; }
 
   .expanded-note {
     background: var(--surface);
@@ -410,7 +443,6 @@
   }
   .expanded-tools input[type="text"]:focus { border-color: var(--accent); }
 
-  /* Панель совпадений при активном поиске */
   .matches-panel {
     margin-bottom: .75rem;
     border: 1px solid var(--accent);
@@ -586,6 +618,7 @@
     main { padding: 1rem; }
     .notes-grid { grid-template-columns: 1fr; }
     #pinnedList { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #pinnedSection { margin-bottom: 1.75rem; padding-bottom: 1rem; }
     body.is-expanded main { padding: 0 .5rem .75rem; }
     .expanded-note { padding: 0 .75rem .9rem; }
     .expanded-note .note-title { font-size: 1.2rem; }
@@ -614,7 +647,10 @@
       <div class="logo">Ламода</div>
 
       <div class="search-wrap">
-        <input id="searchInput" type="text" placeholder="Поиск..." />
+        <div class="search-input-wrap">
+          <input id="searchInput" type="text" placeholder="Поиск..." />
+          <button class="search-clear-btn" id="searchClearBtn" title="Очистить поиск" aria-label="Очистить поиск">✕</button>
+        </div>
         <select id="searchField">
           <option value="all">Везде</option>
           <option value="title">Только заголовки</option>
@@ -944,7 +980,7 @@ function migrateOldNote(n) {
 /* =========================================================
    ДИАГНОСТИКА
    ========================================================= */
-['searchInput','searchField','newBtn','pinnedList','toast','themeBtn','statusBar','tokenInput','tokenSaveBtn','tokenClearBtn','blocksContainer','expandedHost','pinnedSection','sidebar','blocksList','addBlockBtn','newMenu','sidebarToggleBtn']
+['searchInput','searchField','newBtn','pinnedList','toast','themeBtn','statusBar','tokenInput','tokenSaveBtn','tokenClearBtn','blocksContainer','expandedHost','pinnedSection','sidebar','blocksList','addBlockBtn','newMenu','sidebarToggleBtn','searchClearBtn']
   .forEach(id => { if (!document.getElementById(id)) console.warn('Нет #' + id); });
 
 /* =========================================================
@@ -1031,7 +1067,7 @@ if (addBlockBtn) {
 }
 
 /* =========================================================
-   РЕНДЕР: основная область
+   РЕНДЕР
    ========================================================= */
 const pinnedList = document.getElementById('pinnedList');
 const blocksContainer = document.getElementById('blocksContainer');
@@ -1131,13 +1167,11 @@ function render() {
 
   const filtered = notes.filter(matches);
 
-  // Закреплённые
   const pinned = filtered.filter(n => n.pinned).slice(0, MAX_PINNED);
   pinnedList.innerHTML = pinned.length
     ? pinned.map(noteCardHTML).join('')
     : '<p class="empty">Нет закреплённых заметок</p>';
 
-  // Если активен поиск — плоский список без группировки по блокам
   if (searchQuery) {
     const others = filtered.filter(n => !n.pinned);
     blocksContainer.innerHTML = `
@@ -1149,7 +1183,6 @@ function render() {
       </section>
     `;
   } else {
-    // Обычный режим — группировка по блокам
     blocksContainer.innerHTML = blocks.map(b => {
       const blockNotes = filtered.filter(n => n.block === b.id && !n.pinned);
       return `
@@ -1378,7 +1411,6 @@ function bindExpandedEvents(note) {
     pinBtn.addEventListener('click', () => { togglePin(note.id); });
   }
 
-  // Клик по элементу панели совпадений
   root.querySelectorAll('.match-item').forEach(item => {
     item.addEventListener('click', () => {
       const sid = item.dataset.scrollToSection;
@@ -1524,12 +1556,33 @@ function deleteNote(id) {
 }
 
 /* =========================================================
-   ПОИСК В ШАПКЕ
+   ПОИСК В ШАПКЕ + КРЕСТИК ОЧИСТКИ
    ========================================================= */
 const searchInputEl = document.getElementById('searchInput');
+const searchClearBtn = document.getElementById('searchClearBtn');
+
+function updateClearBtn() {
+  if (!searchClearBtn || !searchInputEl) return;
+  if (searchInputEl.value.length > 0) searchClearBtn.classList.add('show');
+  else searchClearBtn.classList.remove('show');
+}
+updateClearBtn();
+
 if (searchInputEl) {
   searchInputEl.addEventListener('input', e => {
     searchQuery = e.target.value.trim();
+    updateClearBtn();
+    if (expandedId) expandedId = null;
+    render();
+  });
+}
+if (searchClearBtn) {
+  searchClearBtn.addEventListener('click', () => {
+    if (!searchInputEl) return;
+    searchInputEl.value = '';
+    searchQuery = '';
+    updateClearBtn();
+    searchInputEl.focus();
     if (expandedId) expandedId = null;
     render();
   });
@@ -1637,7 +1690,7 @@ document.addEventListener('keydown', e => {
       id: uid(), title: 'Добро пожаловать в Ламоду',
       block: UNSORTED_ID, pinned: true, updatedAt: nowISO(),
       sections: [
-        { id: uid(), title: 'О сайте', content: 'Кликните по заметке, чтобы открыть её. При поиске результаты показываются плоским списком, с бейджем блока на каждой карточке. В открытой заметке при активном поиске сверху появляется панель совпадений с подсветкой.' },
+        { id: uid(), title: 'О сайте', content: 'Кликните по заметке, чтобы открыть её. При поиске результаты показываются плоским списком, с бейджем блока на каждой карточке. Крестик в поле поиска очищает запрос.' },
         { id: uid(), title: 'Блоки', content: 'Блоки — это категории заметок. Название блока можно переименовать (кнопка ✎). Заметку можно переместить в блок через выпадающий список в карточке.' },
       ],
     }];

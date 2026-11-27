@@ -409,13 +409,21 @@
     background: transparent; color: var(--text); outline: none;
   }
   .section-head input.section-title:focus { background: var(--surface); border-color: var(--border); }
+
+  /* textarea растягивается по контенту, без внутреннего скролла */
   .section-card textarea.section-content {
-    width: 100%; min-height: 7em; resize: vertical;
-    padding: .5rem .6rem; border: 1px solid transparent; border-radius: 8px;
+    width: 100%;
+    min-height: 3em;
+    resize: none;
+    overflow: hidden;
+    padding: .5rem .6rem;
+    border: 1px solid transparent; border-radius: 8px;
     background: var(--surface); color: var(--text);
     font-family: inherit; font-size: .93rem; line-height: 1.5; outline: none;
+    field-sizing: content; /* современные браузеры: авто-высота по контенту */
   }
   .section-card textarea.section-content:focus { border-color: var(--accent); }
+
   .section-actions { display: flex; gap: .25rem; }
   .section-actions .icon-btn { width: 30px; height: 30px; font-size: .9rem; }
 
@@ -635,6 +643,18 @@ function setStatus(msg) {
   el.classList.add('show');
   clearTimeout(statusTimer);
   statusTimer = setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+/* =========================================================
+   АВТО-ВЫСОТА TEXTAREA РАЗДЕЛОВ
+   ========================================================= */
+function autoResizeTextarea(el) {
+  if (!el) return;
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+function autoResizeAllSections() {
+  document.querySelectorAll('.section-card textarea.section-content').forEach(autoResizeTextarea);
 }
 
 /* =========================================================
@@ -1012,6 +1032,8 @@ function render() {
       blocksContainer.style.display = 'none';
       expandedHost.innerHTML = expandedNoteHTML(note);
       bindExpandedEvents(note);
+      // авто-высота textarea после отрисовки
+      setTimeout(autoResizeAllSections, 0);
       return;
     }
   }
@@ -1173,6 +1195,7 @@ function bindExpandedEvents(note) {
       ? filtered.map(sectionCardHTML).join('')
       : '<p class="empty">Ничего не найдено</p>';
     bindSectionEvents(note, root);
+    setTimeout(autoResizeAllSections, 0);
   });
 
   root.querySelector('[data-action="add-section"]').addEventListener('click', () => {
@@ -1216,6 +1239,9 @@ function bindSectionEvents(note, root) {
     const titleEl = card.querySelector('[data-field="section-title"]');
     const contentEl = card.querySelector('[data-field="section-content"]');
 
+    // сразу подгоняем высоту под текущий контент
+    autoResizeTextarea(contentEl);
+
     let t1 = null, t2 = null;
     titleEl.addEventListener('input', () => {
       clearTimeout(t1);
@@ -1226,6 +1252,7 @@ function bindSectionEvents(note, root) {
       }, 500);
     });
     contentEl.addEventListener('input', () => {
+      autoResizeTextarea(contentEl);   // растягиваем сразу при вводе
       clearTimeout(t2);
       t2 = setTimeout(() => {
         section.content = contentEl.value;

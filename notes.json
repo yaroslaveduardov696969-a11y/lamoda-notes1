@@ -39,23 +39,13 @@
     {
       "id": "b_mwymxkke2upboy",
       "name": "Всегда нужно"
+    },
+    {
+      "id": "b_mwyp90ullx205e",
+      "name": "Ошибки"
     }
   ],
   "notes": [
-    {
-      "id": "mwyorxkm4ljwbc",
-      "title": "Жалоба на доставку до двери (кл сообщает, что у двери заказа нет):",
-      "block": "unsorted",
-      "pinned": false,
-      "updatedAt": "2026-11-27T07:55:46.134Z",
-      "sections": [
-        {
-          "id": "mwyorxkmes9xs6",
-          "title": "Основное",
-          "content": ""
-        }
-      ]
-    },
     {
       "id": "mwyorer02k03xz",
       "title": "Как получить заказ в 5ПОСТ:",
@@ -128,10 +118,10 @@
     },
     {
       "id": "mwyooz8thki4ye",
-      "title": "Если некорректные условия доставки:",
-      "block": "b_mwy809hgxnnyku",
+      "title": "У кл выполнены условия, но доставка всё равно платная.",
+      "block": "b_mwyp90ullx205e",
       "pinned": false,
-      "updatedAt": "2026-11-27T08:08:45.762Z",
+      "updatedAt": "2026-11-27T08:08:28.790Z",
       "sections": [
         {
           "id": "mwyooz8trg99l7",
@@ -145,7 +135,7 @@
       "title": "ПЕРЕРЫВЫ В ПВЗ ЛАМОДА:",
       "block": "b_mwy80sxygtr1wg",
       "pinned": false,
-      "updatedAt": "2026-11-27T08:08:49.146Z",
+      "updatedAt": "2026-11-27T08:08:45.547Z",
       "sections": [
         {
           "id": "mwyonn4bq8c3d3",
@@ -155,30 +145,16 @@
       ]
     },
     {
-      "id": "mwyonelud6ilf1",
-      "title": "КАЗ ПОЧТА:",
-      "block": "b_mwy7tsnmfy4am4",
-      "pinned": false,
-      "updatedAt": "2026-11-27T08:08:54.210Z",
-      "sections": [
-        {
-          "id": "mwyonelup0nljn",
-          "title": "Основное",
-          "content": "Срок доставки составляет 12-20 дней. Трек-номер для отслеживания: KW276015031KZ.\n\nОтследить заказ можно будет по трек-номеру по ссылке https://qazpost.kz/ru, когда заказ поступит в доставку партнерской службы.\n\nКогда посылка прибудет в отделение, вам придёт SMS-уведомление. Пожалуйста, ожидайте."
-        }
-      ]
-    },
-    {
       "id": "mwyomdo26xe6i7",
       "title": "КОГДА ТОВАР ПОЯВИТСЯ В НАЛИЧИИ:",
-      "block": "unsorted",
+      "block": "b_mwy7ngyu0jiy0o",
       "pinned": false,
-      "updatedAt": "2026-11-27T07:51:07.023Z",
+      "updatedAt": "2026-11-27T08:09:39.866Z",
       "sections": [
         {
           "id": "mwyomdo2vwqhzw",
           "title": "Основное",
-          "content": "К сожалению, нет возможности уточнить, когда товар появится в наличии. Вы можете подписаться на товар, нажав на \"колокольчик\". Как только товар будет снова в наличии, вам поступит смс-уведомление.\n\nПосле этого вы можете оформить заказ."
+          "content": "К сожалению, нет возможности уточнить, когда товар появится в наличии. Вы можете подписаться на товар, нажав на \"колокольчик\", как только товар будет снова в наличии, вам поступит смс-уведомление.\nПосле этого вы можете оформить заказ."
         }
       ]
     },
@@ -241,9 +217,9 @@
     {
       "id": "mwyojybgapj0gh",
       "title": "КАЗ ПОЧТА (БЕЗ ЗАДЕРЖКИ) ",
-      "block": "b_mwy7tsnmfy4am4",
+      "block": "unsorted",
       "pinned": false,
-      "updatedAt": "2026-11-27T08:09:21.670Z",
+      "updatedAt": "2026-11-27T07:49:04.386Z",
       "sections": [
         {
           "id": "mwyojybgmap5s2",
@@ -297,9 +273,9 @@
     {
       "id": "mwyoi13wxm2sva",
       "title": "ЗАКАЗ Бел ЗАВИС:",
-      "block": "b_mwy7togege8525",
+      "block": "unsorted",
       "pinned": false,
-      "updatedAt": "2026-11-27T08:09:26.170Z",
+      "updatedAt": "2026-11-27T07:47:39.699Z",
       "sections": [
         {
           "id": "mwyoi13wv6jvps",
@@ -325,9 +301,9 @@
     {
       "id": "mwyogbs0vdk0i3",
       "title": "ЖАЛОБА НА ПВЗ (ЗАКРЫТ, НЕ РАБОТАЕТ В РБ ЧАСЫ)",
-      "block": "b_mwy80sxygtr1wg",
+      "block": "unsorted",
       "pinned": false,
-      "updatedAt": "2026-11-27T08:09:31.640Z",
+      "updatedAt": "2026-11-27T07:46:14.203Z",
       "sections": [
         {
           "id": "mwyogbs0ej5253",
@@ -353,9 +329,9 @@
     {
       "id": "mwyof6kb5zynxt",
       "title": "ТП НЕ БЕРЕТ ТРУБКУ, ЗАКАЗ В ДОСТАВКЕ, ДО ТП НЕ ДОЗВОНИЛИСЬ:",
-      "block": "b_mwy809hgxnnyku",
+      "block": "unsorted",
       "pinned": false,
-      "updatedAt": "2026-11-27T08:09:36.222Z",
+      "updatedAt": "2026-11-27T07:45:33.664Z",
       "sections": [
         {
           "id": "mwyof6kbjfqau8",

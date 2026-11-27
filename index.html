@@ -94,10 +94,8 @@
     100% { opacity: var(--star-opacity); }
   }
 
-  /* ---------- Layout ---------- */
   .app { display: flex; min-height: 100vh; position: relative; z-index: 1; }
 
-  /* ---------- Боковая навигация ---------- */
   aside.sidebar {
     width: 220px; flex-shrink: 0;
     background: var(--surface);
@@ -117,21 +115,17 @@
   .sidebar li { margin-bottom: .15rem; }
   .sidebar .block-row {
     display: flex; align-items: center; gap: .1rem;
-    border-radius: 8px;
-    padding: .1rem .2rem;
+    border-radius: 8px; padding: .1rem .2rem;
   }
   .sidebar .block-row:hover { background: var(--surface-2); }
   .sidebar .block-link {
     flex: 1; display: flex; justify-content: space-between; align-items: center;
-    padding: .4rem .5rem;
-    border-radius: 8px; border: none; background: transparent;
+    padding: .4rem .5rem; border-radius: 8px; border: none; background: transparent;
     color: var(--text); font-size: .9rem; text-align: left;
-    cursor: pointer; transition: background .15s;
-    min-width: 0;
+    cursor: pointer; transition: background .15s; min-width: 0;
   }
   .sidebar .block-link .block-name {
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;
   }
   .sidebar .block-link .count { font-size: .72rem; opacity: .7; margin-left: .35rem; flex-shrink: 0; }
   .sidebar .block-btn {
@@ -142,8 +136,7 @@
   .sidebar .block-btn:hover { opacity: 1; background: var(--border); }
   .sidebar .block-btn.del-block:hover { color: var(--danger); }
   .sidebar .add-block {
-    width: 100%; margin-top: .5rem;
-    padding: .45rem .6rem; border-radius: 8px;
+    width: 100%; margin-top: .5rem; padding: .45rem .6rem; border-radius: 8px;
     border: 1px dashed var(--border); background: transparent;
     color: var(--text-muted); font-size: .85rem; cursor: pointer;
   }
@@ -154,10 +147,8 @@
   }
   body.sidebar-collapsed aside.sidebar > * { display: none; }
 
-  /* ---------- Основная зона ---------- */
   .main-wrap { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 
-  /* Шапка — grid */
   header {
     position: sticky; top: 0; z-index: 10;
     background: var(--surface);
@@ -166,8 +157,7 @@
     display: grid;
     grid-template-columns: auto auto 1fr auto auto auto;
     grid-template-areas: "toggle logo search token theme new";
-    gap: .5rem .75rem;
-    align-items: center;
+    gap: .5rem .75rem; align-items: center;
     box-shadow: var(--shadow);
   }
   header > #sidebarToggleBtn { grid-area: toggle; }
@@ -272,6 +262,9 @@
     scroll-margin-top: var(--scroll-offset);
   }
   .block-section:first-child { margin-top: 0; }
+  .block-section.search-results h2 {
+    color: var(--accent);
+  }
 
   .note-card {
     background: var(--surface);
@@ -320,16 +313,28 @@
     font-size: .78rem; color: var(--text-muted);
     margin-top: auto; padding-top: .25rem; gap: .5rem;
     flex-wrap: wrap;
-    min-width: 0;
-    max-width: 100%;
-    overflow: hidden;
+    min-width: 0; max-width: 100%; overflow: hidden;
   }
-  .note-footer > span {
-    flex: 0 1 auto;
+  .note-meta {
+    display: inline-flex; align-items: center; gap: .35rem;
+    min-width: 0; overflow: hidden; flex: 1 1 auto;
+  }
+  .note-meta > .note-date {
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     min-width: 0;
+  }
+  .note-block-badge {
+    font-size: .65rem;
+    background: var(--surface-2);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .02rem .35rem;
     white-space: nowrap;
+    max-width: 110px;
     overflow: hidden;
     text-overflow: ellipsis;
+    flex-shrink: 0;
   }
   .note-actions {
     display: flex; gap: .25rem; align-items: center;
@@ -348,10 +353,9 @@
   }
 
   #pinnedList .note-footer { flex-wrap: nowrap; gap: .25rem; overflow: hidden; }
-  #pinnedList .note-footer > span {
-    flex: 1 1 auto; min-width: 0; font-size: .62rem;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
+  #pinnedList .note-meta { flex: 1 1 auto; min-width: 0; }
+  #pinnedList .note-meta > .note-date { font-size: .62rem; }
+  #pinnedList .note-block-badge { font-size: .58rem; max-width: 60px; padding: 0 .25rem; }
   #pinnedList .note-actions { flex: 0 0 auto; flex-wrap: nowrap; }
   #pinnedList .block-select { max-width: 70px; font-size: .62rem; padding: .15rem .25rem; }
   #pinnedList .note-actions .icon-btn { width: 22px; height: 22px; font-size: .75rem; }
@@ -359,17 +363,10 @@
   /* ---------- РАСШИРЕННЫЙ РЕЖИМ ---------- */
   body.is-expanded .sidebar { display: none; }
   body.is-expanded .main-wrap { width: 100%; }
-
-  /* Шапка в расширенном режиме не липкая, чтобы не мешать sticky-панели заметки */
-  body.is-expanded header {
-    position: static;
-    box-shadow: none;
-  }
+  body.is-expanded header { position: static; box-shadow: none; }
 
   body.is-expanded main {
-    max-width: none;
-    width: 100%;
-    margin: 0;
+    max-width: none; width: 100%; margin: 0;
     padding: 0 1rem 1.5rem;
   }
   body.is-expanded .notes-grid { display: none; }
@@ -383,17 +380,13 @@
     padding: 0 1.5rem 1.25rem;
     box-shadow: var(--shadow-hover);
     display: flex; flex-direction: column;
-    width: 100%;
-    max-width: none;
+    width: 100%; max-width: none;
     min-height: calc(100vh - 40px);
     position: relative;
   }
 
-  /* Sticky-панель с кнопкой «←» и названием */
   .expanded-top {
-    position: sticky;
-    top: 0;
-    z-index: 6;
+    position: sticky; top: 0; z-index: 6;
     display: flex; flex-wrap: wrap; gap: .5rem; align-items: center;
     padding: .75rem 0;
     background: var(--surface);
@@ -417,11 +410,53 @@
   }
   .expanded-tools input[type="text"]:focus { border-color: var(--accent); }
 
+  /* Панель совпадений при активном поиске */
+  .matches-panel {
+    margin-bottom: .75rem;
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    background: var(--surface-2);
+    padding: .5rem .6rem;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+  .matches-panel-title {
+    font-size: .85rem; font-weight: 600;
+    color: var(--accent);
+    margin-bottom: .35rem;
+  }
+  .match-item {
+    padding: .4rem .5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: .25rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .match-item:hover { border-color: var(--accent); }
+  .match-section-title {
+    font-size: .8rem; font-weight: 600;
+    color: var(--text);
+    margin-bottom: .15rem;
+  }
+  .match-snippet {
+    font-size: .8rem; color: var(--text-muted);
+    line-height: 1.4;
+    word-break: break-word;
+  }
+  .match-snippet mark,
+  .match-section-title mark {
+    background: var(--mark); color: inherit;
+    padding: 0 2px; border-radius: 3px;
+  }
+
   .sections-list { display: flex; flex-direction: column; gap: .9rem; }
   .section-card {
     border: 1px solid var(--border); border-radius: 12px;
     padding: .9rem 1rem; background: var(--surface-2);
     display: flex; flex-direction: column; gap: .4rem;
+    scroll-margin-top: 140px;
+    transition: outline .2s;
   }
   .section-head { display: flex; gap: .4rem; align-items: center; }
   .section-head input.section-title {
@@ -431,7 +466,6 @@
   }
   .section-head input.section-title:focus { background: var(--surface); border-color: var(--border); }
 
-  /* textarea растягивается по контенту, без внутреннего скролла */
   .section-card textarea.section-content {
     width: 100%;
     min-height: 3em;
@@ -447,6 +481,35 @@
 
   .section-actions { display: flex; gap: .25rem; }
   .section-actions .icon-btn { width: 30px; height: 30px; font-size: .9rem; }
+
+  .section-links { margin-top: .15rem; }
+  .section-links-toggle {
+    display: inline-flex; align-items: center; gap: .3rem;
+    background: transparent; border: 1px dashed var(--border);
+    color: var(--text-muted); font-size: .8rem;
+    padding: .25rem .55rem; border-radius: 6px; cursor: pointer;
+  }
+  .section-links-toggle:hover { border-color: var(--accent); color: var(--accent); }
+  .section-links-toggle.open { border-style: solid; border-color: var(--accent); color: var(--accent); }
+
+  .section-links-list {
+    display: none; margin-top: .35rem;
+    padding: .35rem; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 8px;
+    max-height: 220px; overflow-y: auto;
+  }
+  .section-links-list.show { display: block; }
+  .section-links-list a {
+    display: block; padding: .3rem .45rem;
+    border-radius: 6px; font-size: .82rem;
+    color: var(--accent); text-decoration: none;
+    word-break: break-all;
+  }
+  .section-links-list a:hover { background: var(--surface-2); text-decoration: underline; }
+  .section-links-list .no-links {
+    color: var(--text-muted); font-size: .8rem; font-style: italic;
+    padding: .25rem .45rem;
+  }
 
   .empty { color: var(--text-muted); font-style: italic; font-size: .9rem; padding: .5rem 0; }
 
@@ -471,7 +534,6 @@
 
   mark { background: var(--mark); color: inherit; padding: 0 2px; border-radius: 3px; }
 
-  /* ---------- Адаптив ---------- */
   @media (max-width: 1100px) {
     #pinnedList { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     header {
@@ -622,6 +684,7 @@ let searchField = 'all';
 let expandedId = null;
 let expandedSectionQuery = '';
 let saveInFlight = false;
+const openLinksSections = new Set();
 
 /* =========================================================
    УТИЛИТЫ
@@ -668,7 +731,24 @@ function setStatus(msg) {
 }
 
 /* =========================================================
-   АВТО-ВЫСОТА TEXTAREA РАЗДЕЛОВ
+   ИЗВЛЕЧЕНИЕ ССЫЛОК
+   ========================================================= */
+function extractLinks(text) {
+  if (!text) return [];
+  const found = new Set();
+  const mdRe = /\[[^\]]*\]\((https?:\/\/[^\s)]+)\)/gi;
+  let m;
+  while ((m = mdRe.exec(text)) !== null) found.add(m[1]);
+  const urlRe = /(https?:\/\/[^\s<>"')\]]+)/gi;
+  while ((m = urlRe.exec(text)) !== null) {
+    let url = m[1].replace(/[.,;:!?]+$/g, '');
+    found.add(url);
+  }
+  return Array.from(found);
+}
+
+/* =========================================================
+   АВТО-ВЫСОТА TEXTAREA
    ========================================================= */
 function autoResizeTextarea(el) {
   if (!el) return;
@@ -680,7 +760,7 @@ function autoResizeAllSections() {
 }
 
 /* =========================================================
-   ДИНАМИЧЕСКИЙ ОТСТУП ПРОКРУТКИ
+   ДИНАМИЧЕСКИЙ ОТСТУП
    ========================================================= */
 function updateScrollOffset() {
   const headerEl = document.querySelector('header');
@@ -714,12 +794,9 @@ if (tokenSaveBtn) {
     const t = (tokenInput.value || '').trim();
     if (!t) { showToast('Введите токен'); return; }
     setToken(t);
-    setStatus('Токен сохранён в браузере');
+    setStatus('Токен сохранён');
     const loaded = await loadFromGitHub();
-    if (loaded !== null) {
-      applyData(loaded);
-      render();
-    }
+    if (loaded !== null) { applyData(loaded); render(); }
   });
 }
 if (tokenClearBtn) {
@@ -742,13 +819,10 @@ function applySidebarState(collapsed) {
   localStorage.setItem(SIDEBAR_KEY, collapsed ? '1' : '0');
   setTimeout(updateScrollOffset, 220);
 }
-
 applySidebarState(localStorage.getItem(SIDEBAR_KEY) === '1');
-
 if (sidebarToggleBtn) {
   sidebarToggleBtn.addEventListener('click', () => {
-    const collapsed = !document.body.classList.contains('sidebar-collapsed');
-    applySidebarState(collapsed);
+    applySidebarState(!document.body.classList.contains('sidebar-collapsed'));
   });
 }
 
@@ -757,20 +831,16 @@ if (sidebarToggleBtn) {
    ========================================================= */
 async function loadFromGitHub() {
   const token = getToken();
-  if (!token) { setStatus('Токен не указан — работаем локально'); return null; }
+  if (!token) { setStatus('Токен не указан'); return null; }
   setStatus('Загрузка...');
   try {
     const res = await fetch(GITHUB_API_URL, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
-      },
+      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' },
       cache: 'no-store',
     });
     if (res.status === 404) { setStatus('notes.json не найден — будет создан'); return { blocks: [{id:UNSORTED_ID,name:'Несортированные'}], notes: [] }; }
     if (res.status === 401) { setStatus('Токен не принят (401)'); showToast('Токен неверный или отозван'); return null; }
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
     const data = await res.json();
     const raw = atob(data.content.replace(/\s/g, ''));
     const json = decodeURIComponent(escape(raw));
@@ -780,30 +850,26 @@ async function loadFromGitHub() {
   } catch (e) {
     console.error('loadFromGitHub:', e);
     setStatus('Ошибка загрузки');
-    showToast('Не удалось загрузить из GitHub');
+    showToast('Не удалось загрузить');
     return null;
   }
 }
 
 async function saveToGitHub() {
   const token = getToken();
-  if (!token) { setStatus('Токен не указан — изменения только локально'); return; }
+  if (!token) { setStatus('Токен не указан — только локально'); return; }
   if (saveInFlight) { saveToGitHub._again = true; return; }
   saveInFlight = true;
   setStatus('Сохранение...');
-
   try {
     let sha = null;
     const getRes = await fetch(GITHUB_API_URL, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
-      },
+      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' },
       cache: 'no-store',
     });
     if (getRes.ok) { const cur = await getRes.json(); sha = cur.sha; }
-    else if (getRes.status === 401) throw new Error('401 — токен не принят');
-    else if (getRes.status !== 404) throw new Error(`GET SHA: HTTP ${getRes.status}`);
+    else if (getRes.status === 401) throw new Error('401');
+    else if (getRes.status !== 404) throw new Error(`GET SHA: ${getRes.status}`);
 
     const payload = { blocks, notes };
     const json = JSON.stringify(payload, null, 2);
@@ -811,8 +877,7 @@ async function saveToGitHub() {
 
     const body = {
       message: `Обновление (${new Date().toLocaleString('ru-RU')})`,
-      content: base64,
-      branch: GITHUB_BRANCH,
+      content: base64, branch: GITHUB_BRANCH,
     };
     if (sha) body.sha = sha;
 
@@ -827,14 +892,14 @@ async function saveToGitHub() {
     });
     if (!putRes.ok) {
       const err = await putRes.json().catch(() => ({}));
-      if (putRes.status === 401) throw new Error('401 — токен не принят');
-      throw new Error(`PUT: HTTP ${putRes.status} ${err.message || ''}`);
+      if (putRes.status === 401) throw new Error('401');
+      throw new Error(`PUT: ${putRes.status} ${err.message || ''}`);
     }
     setStatus('Сохранено в GitHub ✓');
   } catch (e) {
     console.error('saveToGitHub:', e);
     setStatus('Ошибка сохранения');
-    showToast('Не удалось сохранить в GitHub');
+    showToast('Не удалось сохранить');
   } finally {
     saveInFlight = false;
     if (saveToGitHub._again) { saveToGitHub._again = false; saveToGitHub(); }
@@ -846,45 +911,31 @@ async function saveToGitHub() {
    ========================================================= */
 function applyData(data) {
   if (!data) return;
-
   if (Array.isArray(data)) {
     blocks = [{ id: UNSORTED_ID, name: 'Несортированные' }];
     notes = data.map(migrateOldNote);
     return;
   }
-
   if (Array.isArray(data.blocks)) {
     blocks = data.blocks.slice();
-    if (!blocks.some(b => b.id === UNSORTED_ID)) {
-      blocks.unshift({ id: UNSORTED_ID, name: 'Несортированные' });
-    }
+    if (!blocks.some(b => b.id === UNSORTED_ID)) blocks.unshift({ id: UNSORTED_ID, name: 'Несортированные' });
   } else {
     blocks = [{ id: UNSORTED_ID, name: 'Несортированные' }];
   }
-
   notes = Array.isArray(data.notes) ? data.notes.map(migrateOldNote) : [];
 }
-
 function migrateOldNote(n) {
   if (Array.isArray(n.sections)) {
     return {
-      id: n.id || uid(),
-      title: n.title || '',
-      block: n.block || UNSORTED_ID,
-      pinned: !!n.pinned,
+      id: n.id || uid(), title: n.title || '',
+      block: n.block || UNSORTED_ID, pinned: !!n.pinned,
       updatedAt: n.updatedAt || nowISO(),
-      sections: n.sections.map(s => ({
-        id: s.id || uid(),
-        title: s.title || '',
-        content: s.content || '',
-      })),
+      sections: n.sections.map(s => ({ id: s.id || uid(), title: s.title || '', content: s.content || '' })),
     };
   }
   return {
-    id: n.id || uid(),
-    title: n.title || '',
-    block: n.block || UNSORTED_ID,
-    pinned: !!n.pinned,
+    id: n.id || uid(), title: n.title || '',
+    block: n.block || UNSORTED_ID, pinned: !!n.pinned,
     updatedAt: n.updatedAt || nowISO(),
     sections: [{ id: uid(), title: 'Основное', content: n.content || '' }],
   };
@@ -894,12 +945,10 @@ function migrateOldNote(n) {
    ДИАГНОСТИКА
    ========================================================= */
 ['searchInput','searchField','newBtn','pinnedList','toast','themeBtn','statusBar','tokenInput','tokenSaveBtn','tokenClearBtn','blocksContainer','expandedHost','pinnedSection','sidebar','blocksList','addBlockBtn','newMenu','sidebarToggleBtn']
-  .forEach(id => {
-    if (!document.getElementById(id)) console.warn('В HTML отсутствует #' + id);
-  });
+  .forEach(id => { if (!document.getElementById(id)) console.warn('Нет #' + id); });
 
 /* =========================================================
-   РЕНДЕР: боковая навигация
+   САЙДБАР
    ========================================================= */
 const blocksListEl = document.getElementById('blocksList');
 const addBlockBtn = document.getElementById('addBlockBtn');
@@ -1010,6 +1059,17 @@ function highlight(text, q) {
   return safe.replace(re, '<mark>$1</mark>');
 }
 
+function makeSnippet(text, query) {
+  if (!text) return '';
+  const q = query.toLowerCase();
+  const idx = text.toLowerCase().indexOf(q);
+  if (idx === -1) return highlight(text.slice(0, 200), query);
+  const start = Math.max(0, idx - 60);
+  const end = Math.min(text.length, idx + q.length + 60);
+  let snippet = (start > 0 ? '…' : '') + text.slice(start, end) + (end < text.length ? '…' : '');
+  return highlight(snippet, query);
+}
+
 function firstSectionPreview(note) {
   const s = (note.sections || [])[0];
   return s ? s.content : '';
@@ -1022,6 +1082,7 @@ function noteCardHTML(note) {
     ? highlight(firstSectionPreview(note), q)
     : escapeHtml(firstSectionPreview(note));
   const sectionsCount = (note.sections || []).length;
+  const bName = blockName(note.block);
 
   return `
     <article class="note-card collapsed" data-id="${note.id}">
@@ -1029,7 +1090,10 @@ function noteCardHTML(note) {
       <div class="note-content">${preview || '<span style="color:var(--text-muted)">Пусто</span>'}</div>
       ${sectionsCount > 1 ? `<div class="section-summary">${(note.sections || []).slice(0,3).map(s => `<span>${escapeHtml(s.title || 'Без названия')}</span>`).join('')}${sectionsCount > 3 ? `<span>+${sectionsCount-3}</span>` : ''}</div>` : ''}
       <div class="note-footer">
-        <span>${formatDate(note.updatedAt)}</span>
+        <span class="note-meta">
+          <span class="note-date">${formatDate(note.updatedAt)}</span>
+          <span class="note-block-badge" title="Блок: ${escapeHtml(bName)}">${escapeHtml(bName)}</span>
+        </span>
         <div class="note-actions">
           <select class="block-select" data-block-select="${note.id}" title="Переместить в блок">
             ${blocks.map(b => `<option value="${b.id}" ${b.id === note.block ? 'selected' : ''}>${escapeHtml(b.name)}</option>`).join('')}
@@ -1055,10 +1119,7 @@ function render() {
       expandedHost.innerHTML = expandedNoteHTML(note);
       bindExpandedEvents(note);
       setTimeout(autoResizeAllSections, 0);
-      // прокрутить страницу наверх, чтобы кнопка «←» и название были видны
-      requestAnimationFrame(() => {
-        window.scrollTo({ top: 0, behavior: 'auto' });
-      });
+      requestAnimationFrame(() => { window.scrollTo({ top: 0, behavior: 'auto' }); });
       return;
     }
   }
@@ -1069,24 +1130,40 @@ function render() {
   expandedHost.innerHTML = '';
 
   const filtered = notes.filter(matches);
+
+  // Закреплённые
   const pinned = filtered.filter(n => n.pinned).slice(0, MAX_PINNED);
   pinnedList.innerHTML = pinned.length
     ? pinned.map(noteCardHTML).join('')
     : '<p class="empty">Нет закреплённых заметок</p>';
 
-  blocksContainer.innerHTML = blocks.map(b => {
-    const blockNotes = filtered.filter(n => n.block === b.id && !n.pinned);
-    return `
-      <section class="block-section" id="block-${b.id}" data-block-section="${b.id}">
-        <h2>${escapeHtml(b.name)} <span style="font-weight:400; text-transform:none; letter-spacing:0;">(${blockNotes.length})</span></h2>
-        <div class="notes-grid" data-block-grid="${b.id}">
-          ${blockNotes.length
-            ? blockNotes.map(noteCardHTML).join('')
-            : '<p class="empty">В этом блоке пока нет заметок</p>'}
+  // Если активен поиск — плоский список без группировки по блокам
+  if (searchQuery) {
+    const others = filtered.filter(n => !n.pinned);
+    blocksContainer.innerHTML = `
+      <section class="block-section search-results">
+        <h2>🔍 Результаты поиска (${filtered.length})</h2>
+        <div class="notes-grid">
+          ${others.length ? others.map(noteCardHTML).join('') : '<p class="empty">Ничего не найдено</p>'}
         </div>
       </section>
     `;
-  }).join('');
+  } else {
+    // Обычный режим — группировка по блокам
+    blocksContainer.innerHTML = blocks.map(b => {
+      const blockNotes = filtered.filter(n => n.block === b.id && !n.pinned);
+      return `
+        <section class="block-section" id="block-${b.id}" data-block-section="${b.id}">
+          <h2>${escapeHtml(b.name)} <span style="font-weight:400; text-transform:none; letter-spacing:0;">(${blockNotes.length})</span></h2>
+          <div class="notes-grid" data-block-grid="${b.id}">
+            ${blockNotes.length
+              ? blockNotes.map(noteCardHTML).join('')
+              : '<p class="empty">В этом блоке пока нет заметок</p>'}
+          </div>
+        </section>
+      `;
+    }).join('');
+  }
 
   bindGridEvents();
   renderSidebar();
@@ -1095,6 +1172,36 @@ function render() {
 /* =========================================================
    РАСШИРЕННАЯ ЗАМЕТКА
    ========================================================= */
+function renderMatchesPanel(note) {
+  if (!searchQuery) return '';
+  const q = searchQuery.toLowerCase();
+  const items = [];
+
+  if ((note.title || '').toLowerCase().includes(q)) {
+    items.push(`<div class="match-item" data-scroll-to="note-title">
+      <div class="match-section-title">Название заметки</div>
+      <div class="match-snippet">${highlight(note.title, searchQuery)}</div>
+    </div>`);
+  }
+
+  (note.sections || []).forEach(s => {
+    const inTitle = (s.title || '').toLowerCase().includes(q);
+    const inContent = (s.content || '').toLowerCase().includes(q);
+    if (!inTitle && !inContent) return;
+    const snippet = makeSnippet(s.content || '', searchQuery);
+    items.push(`<div class="match-item" data-scroll-to-section="${s.id}">
+      <div class="match-section-title">Раздел: ${highlight(s.title || 'Без названия', searchQuery)}</div>
+      <div class="match-snippet">${snippet}</div>
+    </div>`);
+  });
+
+  if (!items.length) return '';
+  return `<div class="matches-panel">
+    <div class="matches-panel-title">🔍 Совпадения в этой заметке (${items.length})</div>
+    ${items.join('')}
+  </div>`;
+}
+
 function expandedNoteHTML(note) {
   const q = expandedSectionQuery.toLowerCase();
   const sections = (note.sections || []).filter(s => {
@@ -1102,6 +1209,8 @@ function expandedNoteHTML(note) {
     return (s.title || '').toLowerCase().includes(q) ||
            (s.content || '').toLowerCase().includes(q);
   });
+
+  const matchesPanel = renderMatchesPanel(note);
 
   return `
     <div class="expanded-note" data-id="${note.id}">
@@ -1119,6 +1228,8 @@ function expandedNoteHTML(note) {
         <button class="btn small" data-action="add-section">+ Раздел</button>
       </div>
 
+      ${matchesPanel}
+
       <div class="sections-list">
         ${sections.length ? sections.map(sectionCardHTML).join('') : '<p class="empty">Разделов нет. Нажмите «+ Раздел».</p>'}
       </div>
@@ -1127,6 +1238,16 @@ function expandedNoteHTML(note) {
 }
 
 function sectionCardHTML(s) {
+  const links = extractLinks(s.content || '');
+  const isOpen = openLinksSections.has(s.id);
+  const linksHtml = links.length
+    ? `<div class="section-links-list ${isOpen ? 'show' : ''}">
+         ${links.map(u => `<a href="${escapeHtml(u)}" target="_blank" rel="noopener noreferrer">${escapeHtml(u)}</a>`).join('')}
+       </div>`
+    : `<div class="section-links-list ${isOpen ? 'show' : ''}">
+         <div class="no-links">В этом разделе нет ссылок</div>
+       </div>`;
+
   return `
     <div class="section-card" data-section-id="${s.id}">
       <div class="section-head">
@@ -1137,6 +1258,13 @@ function sectionCardHTML(s) {
         </div>
       </div>
       <textarea class="section-content" data-field="section-content" placeholder="Текст раздела...">${escapeHtml(s.content || '')}</textarea>
+
+      <div class="section-links">
+        <button class="section-links-toggle ${isOpen ? 'open' : ''}" data-action="toggle-links" data-section-id="${s.id}">
+          🔗 Ссылки в разделе (${links.length})
+        </button>
+        ${linksHtml}
+      </div>
     </div>
   `;
 }
@@ -1247,10 +1375,26 @@ function bindExpandedEvents(note) {
 
   const pinBtn = root.querySelector('[data-action="pin"]');
   if (pinBtn) {
-    pinBtn.addEventListener('click', () => {
-      togglePin(note.id);
-    });
+    pinBtn.addEventListener('click', () => { togglePin(note.id); });
   }
+
+  // Клик по элементу панели совпадений
+  root.querySelectorAll('.match-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const sid = item.dataset.scrollToSection;
+      if (sid) {
+        const card = root.querySelector(`.section-card[data-section-id="${sid}"]`);
+        if (card) {
+          card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          card.style.outline = '2px solid var(--accent)';
+          setTimeout(() => { card.style.outline = ''; }, 1500);
+        }
+      } else if (item.dataset.scrollTo === 'note-title') {
+        const ti = root.querySelector('[data-field="note-title"]');
+        if (ti) { ti.scrollIntoView({ behavior: 'smooth', block: 'center' }); ti.focus(); }
+      }
+    });
+  });
 
   bindSectionEvents(note, root);
 }
@@ -1266,6 +1410,27 @@ function bindSectionEvents(note, root) {
 
     autoResizeTextarea(contentEl);
 
+    function updateLinksBlock() {
+      const links = extractLinks(section.content || '');
+      const toggle = card.querySelector('[data-action="toggle-links"]');
+      const listEl = card.querySelector('.section-links-list');
+      if (toggle) {
+        toggle.textContent = `🔗 Ссылки в разделе (${links.length})`;
+        toggle.classList.toggle('open', openLinksSections.has(sid));
+      }
+      if (listEl) {
+        if (links.length) {
+          listEl.innerHTML = links.map(u =>
+            `<a href="${escapeHtml(u)}" target="_blank" rel="noopener noreferrer">${escapeHtml(u)}</a>`
+          ).join('');
+        } else {
+          listEl.innerHTML = `<div class="no-links">В этом разделе нет ссылок</div>`;
+        }
+        listEl.classList.toggle('show', openLinksSections.has(sid));
+      }
+    }
+    updateLinksBlock();
+
     let t1 = null, t2 = null;
     titleEl.addEventListener('input', () => {
       clearTimeout(t1);
@@ -1277,6 +1442,7 @@ function bindSectionEvents(note, root) {
     });
     contentEl.addEventListener('input', () => {
       autoResizeTextarea(contentEl);
+      updateLinksBlock();
       clearTimeout(t2);
       t2 = setTimeout(() => {
         section.content = contentEl.value;
@@ -1284,6 +1450,23 @@ function bindSectionEvents(note, root) {
         saveToGitHub();
       }, 500);
     });
+
+    const toggleBtn = card.querySelector('[data-action="toggle-links"]');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const listEl = card.querySelector('.section-links-list');
+        if (openLinksSections.has(sid)) {
+          openLinksSections.delete(sid);
+          listEl.classList.remove('show');
+          toggleBtn.classList.remove('open');
+        } else {
+          openLinksSections.add(sid);
+          listEl.classList.add('show');
+          toggleBtn.classList.add('open');
+        }
+      });
+    }
 
     card.querySelector('[data-action="copy-section"]').addEventListener('click', async (e) => {
       e.stopPropagation();
@@ -1305,6 +1488,7 @@ function bindSectionEvents(note, root) {
     card.querySelector('[data-action="delete-section"]').addEventListener('click', (e) => {
       e.stopPropagation();
       if (!confirm('Удалить раздел?')) return;
+      openLinksSections.delete(sid);
       note.sections = (note.sections || []).filter(s => s.id !== sid);
       note.updatedAt = nowISO();
       saveToGitHub();
@@ -1385,10 +1569,7 @@ if (newBtnEl && newMenuEl) {
 
 function createNote() {
   const note = {
-    id: uid(),
-    title: '',
-    block: UNSORTED_ID,
-    pinned: false,
+    id: uid(), title: '', block: UNSORTED_ID, pinned: false,
     updatedAt: nowISO(),
     sections: [{ id: uid(), title: 'Основное', content: '' }],
   };
@@ -1402,10 +1583,7 @@ function createNote() {
 }
 
 function createSectionInOpenNote() {
-  if (!expandedId) {
-    showToast('Сначала откройте заметку');
-    return;
-  }
+  if (!expandedId) { showToast('Сначала откройте заметку'); return; }
   const note = notes.find(n => n.id === expandedId);
   if (!note) return;
   note.sections = note.sections || [];
@@ -1456,14 +1634,11 @@ document.addEventListener('keydown', e => {
   } else {
     blocks = [{ id: UNSORTED_ID, name: 'Несортированные' }];
     notes = [{
-      id: uid(),
-      title: 'Добро пожаловать в Ламоду',
-      block: UNSORTED_ID,
-      pinned: true,
-      updatedAt: nowISO(),
+      id: uid(), title: 'Добро пожаловать в Ламоду',
+      block: UNSORTED_ID, pinned: true, updatedAt: nowISO(),
       sections: [
-        { id: uid(), title: 'О сайте', content: 'Кликните по заметке, чтобы открыть её на всю ширину. Внутри — разделы (главы). Можно копировать текст раздела, искать по разделам, менять блок заметки.' },
-        { id: uid(), title: 'Блоки', content: 'Блоки — это категории заметок (Клиенты, Заказы...). Список блоков слева. Название блока можно переименовать (кнопка ✎). Заметку можно переместить в блок через выпадающий список в карточке.' },
+        { id: uid(), title: 'О сайте', content: 'Кликните по заметке, чтобы открыть её. При поиске результаты показываются плоским списком, с бейджем блока на каждой карточке. В открытой заметке при активном поиске сверху появляется панель совпадений с подсветкой.' },
+        { id: uid(), title: 'Блоки', content: 'Блоки — это категории заметок. Название блока можно переименовать (кнопка ✎). Заметку можно переместить в блок через выпадающий список в карточке.' },
       ],
     }];
   }

@@ -21,6 +21,7 @@
     --shadow: 0 1px 3px rgba(19, 42, 68, .1);
     --shadow-hover: 0 4px 14px rgba(19, 42, 68, .16);
     --star-opacity: .2;
+    --scroll-offset: 90px; /* обновляется из JS */
   }
   [data-theme="dark"] {
     --bg: #0b0b1a;
@@ -240,7 +241,7 @@
   h2 {
     font-size: .95rem; font-weight: 600; color: var(--text-muted);
     margin: 1.25rem 0 .75rem; text-transform: uppercase; letter-spacing: .04em;
-    scroll-margin-top: 90px;
+    scroll-margin-top: var(--scroll-offset);
   }
   h2:first-child { margin-top: 0; }
 
@@ -260,7 +261,10 @@
   #pinnedList .note-footer { font-size: .68rem; padding-top: .15rem; }
   #pinnedList .note-actions .icon-btn { width: 24px; height: 24px; font-size: .8rem; }
 
-  .block-section { margin-bottom: 2.25rem; }
+  .block-section {
+    margin-bottom: 2.25rem;
+    scroll-margin-top: var(--scroll-offset);
+  }
 
   .note-card {
     background: var(--surface);
@@ -643,6 +647,26 @@ function setStatus(msg) {
 }
 
 /* =========================================================
+   ДИНАМИЧЕСКИЙ ОТСТУП ПРОКРУТКИ (--scroll-offset)
+   ========================================================= */
+function updateScrollOffset() {
+  const headerEl = document.querySelector('header');
+  const sidebarEl = document.getElementById('sidebar');
+  let offset = (headerEl?.offsetHeight || 0) + 10;
+  // На мобильных сайдбар горизонтальный и липкий сверху — добавляем его высоту
+  if (window.innerWidth <= 820 && sidebarEl && !document.body.classList.contains('sidebar-collapsed')) {
+    offset += (sidebarEl.offsetHeight || 0);
+  }
+  document.documentElement.style.setProperty('--scroll-offset', offset + 'px');
+}
+updateScrollOffset();
+window.addEventListener('resize', updateScrollOffset);
+// пересчитывать после сворачивания/разворачивания сайдбара
+if (sidebarToggleBtn) {
+  // обработчик добавим ниже, после его объявления
+}
+
+/* =========================================================
    ТОКЕН
    ========================================================= */
 function getToken() { return (localStorage.getItem(TOKEN_KEY) || '').trim(); }
@@ -688,6 +712,8 @@ function applySidebarState(collapsed) {
   if (collapsed) document.body.classList.add('sidebar-collapsed');
   else document.body.classList.remove('sidebar-collapsed');
   localStorage.setItem(SIDEBAR_KEY, collapsed ? '1' : '0');
+  // после изменения ширины/высоты сайдбара пересчитать offset
+  setTimeout(updateScrollOffset, 220); // после transition
 }
 
 applySidebarState(localStorage.getItem(SIDEBAR_KEY) === '1');
@@ -872,8 +898,12 @@ function renderSidebar() {
       const blockId = btn.dataset.block;
       if (expandedId) { expandedId = null; render(); }
       setTimeout(() => {
-        const el = document.getElementById('block-' + blockId);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const section = document.getElementById('block-' + blockId);
+        if (!section) return;
+        // скроллим к заголовку h2 внутри секции, чтобы он был в зоне видимости
+        const heading = section.querySelector('h2');
+        const target = heading || section;
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 30);
     });
   });
@@ -1384,6 +1414,8 @@ document.addEventListener('keydown', e => {
     }];
   }
   render();
+  // после первого рендера пересчитать offset (шапка уже отрисована)
+  updateScrollOffset();
 })();
 </script>
 </body>

@@ -1231,7 +1231,7 @@ function bindSectionEvents(note, root) {
 
     card.querySelector('[data-action="copy-section"]').addEventListener('click', async (e) => {
       e.stopPropagation();
-      const text = (section.title || 'Без названия') + '\n\n' + (section.content || '');
+      const text = section.content || '';
       try {
         await navigator.clipboard.writeText(text);
         showToast('Раздел скопирован');

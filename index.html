@@ -94,23 +94,18 @@
   }
 
   /* ---------- Layout ---------- */
-  .app {
-    display: flex;
-    min-height: 100vh;
-    position: relative;
-    z-index: 1;
-  }
+  .app { display: flex; min-height: 100vh; position: relative; z-index: 1; }
 
   /* ---------- Боковая навигация ---------- */
   aside.sidebar {
-    width: 220px;
-    flex-shrink: 0;
+    width: 220px; flex-shrink: 0;
     background: var(--surface);
     border-right: 1px solid var(--border);
     padding: 1rem .75rem;
     position: sticky; top: 0; align-self: flex-start;
     height: 100vh; overflow-y: auto;
     z-index: 5;
+    transition: width .2s, padding .2s;
   }
   .sidebar h3 {
     font-size: .72rem; font-weight: 700; color: var(--text-muted);
@@ -127,10 +122,7 @@
     cursor: pointer; transition: background .15s;
   }
   .sidebar .block-link:hover { background: var(--surface-2); }
-  .sidebar .block-link.active { background: var(--accent); color: #fff; }
-  .sidebar .block-link .count {
-    font-size: .72rem; opacity: .7; margin-left: .35rem;
-  }
+  .sidebar .block-link .count { font-size: .72rem; opacity: .7; margin-left: .35rem; }
   .sidebar .block-link .del-block {
     background: transparent; border: none; color: inherit;
     cursor: pointer; font-size: .85rem; opacity: .5; padding: 0 .2rem;
@@ -143,6 +135,12 @@
     color: var(--text-muted); font-size: .85rem; cursor: pointer;
   }
   .sidebar .add-block:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Свёрнутый сайдбар */
+  body.sidebar-collapsed aside.sidebar {
+    width: 0; padding: 0; border-right: none; overflow: hidden;
+  }
+  body.sidebar-collapsed aside.sidebar > * { display: none; }
 
   /* ---------- Основная зона ---------- */
   .main-wrap { flex: 1; min-width: 0; display: flex; flex-direction: column; }
@@ -207,7 +205,7 @@
     position: absolute; right: 0; top: calc(100% + 6px);
     background: var(--surface); border: 1px solid var(--border);
     border-radius: 10px; box-shadow: var(--shadow-hover);
-    min-width: 200px; padding: .3rem; display: none; z-index: 20;
+    min-width: 220px; padding: .3rem; display: none; z-index: 20;
   }
   .new-menu.show { display: block; }
   .new-menu button {
@@ -318,9 +316,7 @@
     box-shadow: var(--shadow-hover);
     display: flex; flex-direction: column; gap: .75rem;
   }
-  .expanded-top {
-    display: flex; flex-wrap: wrap; gap: .5rem; align-items: center;
-  }
+  .expanded-top { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
   .expanded-note .note-title {
     font-size: 1.45rem; font-weight: 700;
     flex: 1; min-width: 200px;
@@ -342,9 +338,7 @@
     padding: .9rem 1rem; background: var(--surface-2);
     display: flex; flex-direction: column; gap: .4rem;
   }
-  .section-head {
-    display: flex; gap: .4rem; align-items: center;
-  }
+  .section-head { display: flex; gap: .4rem; align-items: center; }
   .section-head input.section-title {
     flex: 1; font-size: 1rem; font-weight: 600;
     padding: .35rem .5rem; border: 1px solid transparent; border-radius: 6px;
@@ -400,6 +394,7 @@
     .sidebar ul { display: flex; gap: .3rem; }
     .sidebar .block-link { white-space: nowrap; padding: .35rem .6rem; font-size: .85rem; }
     .sidebar .add-block { width: auto; margin: 0; white-space: nowrap; }
+    body.sidebar-collapsed aside.sidebar { height: 0; padding: 0; border-bottom: none; }
   }
   @media (max-width: 720px) {
     header { padding: .6rem 1rem; }
@@ -432,6 +427,7 @@
 
   <div class="main-wrap">
     <header>
+      <button class="icon-btn" id="sidebarToggleBtn" title="Свернуть/показать блоки">☰</button>
       <div class="logo">Ламода</div>
 
       <div class="search-wrap">
@@ -490,6 +486,7 @@ const GITHUB_API_URL =
 
 const THEME_KEY = 'lamoda_theme';
 const TOKEN_KEY = 'lamoda_gh_token';
+const SIDEBAR_KEY = 'lamoda_sidebar_collapsed';
 
 const MAX_PINNED = 6;
 const UNSORTED_ID = 'unsorted';
@@ -502,7 +499,7 @@ let notes = [];
 let searchQuery = '';
 let searchField = 'all';
 let expandedId = null;
-let expandedSectionQuery = ''; // поиск внутри открытой заметки
+let expandedSectionQuery = '';
 let saveInFlight = false;
 
 /* =========================================================
@@ -583,6 +580,26 @@ if (tokenClearBtn) {
     if (tokenInput) tokenInput.value = '';
     showToast('Токен удалён');
     setStatus('Токен удалён');
+  });
+}
+
+/* =========================================================
+   СВОРАЧИВАНИЕ САЙДБАРА
+   ========================================================= */
+const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+
+function applySidebarState(collapsed) {
+  if (collapsed) document.body.classList.add('sidebar-collapsed');
+  else document.body.classList.remove('sidebar-collapsed');
+  localStorage.setItem(SIDEBAR_KEY, collapsed ? '1' : '0');
+}
+
+applySidebarState(localStorage.getItem(SIDEBAR_KEY) === '1');
+
+if (sidebarToggleBtn) {
+  sidebarToggleBtn.addEventListener('click', () => {
+    const collapsed = !document.body.classList.contains('sidebar-collapsed');
+    applySidebarState(collapsed);
   });
 }
 
@@ -676,19 +693,17 @@ async function saveToGitHub() {
 }
 
 /* =========================================================
-   МИГРАЦИЯ ДАННЫХ
+   МИГРАЦИЯ
    ========================================================= */
 function applyData(data) {
   if (!data) return;
 
-  // Старый формат: массив заметок
   if (Array.isArray(data)) {
     blocks = [{ id: UNSORTED_ID, name: 'Несортированные' }];
     notes = data.map(migrateOldNote);
     return;
   }
 
-  // Новый формат: { blocks, notes }
   if (Array.isArray(data.blocks)) {
     blocks = data.blocks.slice();
     if (!blocks.some(b => b.id === UNSORTED_ID)) {
@@ -698,15 +713,10 @@ function applyData(data) {
     blocks = [{ id: UNSORTED_ID, name: 'Несортированные' }];
   }
 
-  if (Array.isArray(data.notes)) {
-    notes = data.notes.map(n => migrateOldNote(n));
-  } else {
-    notes = [];
-  }
+  notes = Array.isArray(data.notes) ? data.notes.map(migrateOldNote) : [];
 }
 
 function migrateOldNote(n) {
-  // если уже новый формат — возвращаем как есть
   if (Array.isArray(n.sections)) {
     return {
       id: n.id || uid(),
@@ -721,25 +731,20 @@ function migrateOldNote(n) {
       })),
     };
   }
-  // старый формат: title + content
   return {
     id: n.id || uid(),
     title: n.title || '',
     block: n.block || UNSORTED_ID,
     pinned: !!n.pinned,
     updatedAt: n.updatedAt || nowISO(),
-    sections: [{
-      id: uid(),
-      title: 'Основное',
-      content: n.content || '',
-    }],
+    sections: [{ id: uid(), title: 'Основное', content: n.content || '' }],
   };
 }
 
 /* =========================================================
    ДИАГНОСТИКА
    ========================================================= */
-['searchInput','searchField','newBtn','pinnedList','toast','themeBtn','statusBar','tokenInput','tokenSaveBtn','tokenClearBtn','blocksContainer','expandedHost','pinnedSection','sidebar','blocksList','addBlockBtn','newMenu']
+['searchInput','searchField','newBtn','pinnedList','toast','themeBtn','statusBar','tokenInput','tokenSaveBtn','tokenClearBtn','blocksContainer','expandedHost','pinnedSection','sidebar','blocksList','addBlockBtn','newMenu','sidebarToggleBtn']
   .forEach(id => {
     if (!document.getElementById(id)) console.warn('В HTML отсутствует #' + id);
   });
@@ -867,7 +872,6 @@ function noteCardHTML(note) {
 function render() {
   if (!pinnedList || !blocksContainer || !expandedHost) return;
 
-  // Расширенный режим
   if (expandedId) {
     const note = notes.find(n => n.id === expandedId);
     if (!note) { expandedId = null; }
@@ -886,14 +890,12 @@ function render() {
   blocksContainer.style.display = '';
   expandedHost.innerHTML = '';
 
-  // Закреплённые
   const filtered = notes.filter(matches);
   const pinned = filtered.filter(n => n.pinned).slice(0, MAX_PINNED);
   pinnedList.innerHTML = pinned.length
     ? pinned.map(noteCardHTML).join('')
     : '<p class="empty">Нет закреплённых заметок</p>';
 
-  // Блоки
   blocksContainer.innerHTML = blocks.map(b => {
     const blockNotes = filtered.filter(n => n.block === b.id && !n.pinned);
     return `
@@ -965,7 +967,6 @@ function sectionCardHTML(s) {
    СОБЫТИЯ: сетка
    ========================================================= */
 function bindGridEvents() {
-  // Клик по карточке — открыть
   document.querySelectorAll('.note-card.collapsed').forEach(card => {
     card.addEventListener('click', e => {
       if (e.target.closest('[data-action]') || e.target.closest('[data-block-select]')) return;
@@ -975,7 +976,6 @@ function bindGridEvents() {
     });
   });
 
-  // Закрепить
   document.querySelectorAll('.note-card.collapsed [data-action="pin"]').forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation();
@@ -983,7 +983,6 @@ function bindGridEvents() {
     });
   });
 
-  // Удалить
   document.querySelectorAll('.note-card.collapsed [data-action="delete"]').forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation();
@@ -991,9 +990,8 @@ function bindGridEvents() {
     });
   });
 
-  // Смена блока у заметки
   document.querySelectorAll('[data-block-select]').forEach(sel => {
-    sel.addEventListener('change', e => {
+    sel.addEventListener('change', () => {
       const noteId = sel.dataset.blockSelect;
       const note = notes.find(n => n.id === noteId);
       if (!note) return;
@@ -1013,14 +1011,12 @@ function bindExpandedEvents(note) {
   const root = expandedHost.querySelector('.expanded-note');
   if (!root) return;
 
-  // Назад
   root.querySelector('[data-action="collapse"]').addEventListener('click', () => {
     expandedId = null;
     expandedSectionQuery = '';
     render();
   });
 
-  // Название заметки
   const titleInput = root.querySelector('[data-field="note-title"]');
   let titleTimer = null;
   titleInput.addEventListener('input', () => {
@@ -1032,11 +1028,9 @@ function bindExpandedEvents(note) {
     }, 500);
   });
 
-  // Поиск по разделам
   const searchEl = root.querySelector('#sectionSearchInput');
   searchEl.addEventListener('input', () => {
     expandedSectionQuery = searchEl.value.trim();
-    // перерисовать только список разделов
     const list = root.querySelector('.sections-list');
     const q = expandedSectionQuery.toLowerCase();
     const filtered = (note.sections || []).filter(s => {
@@ -1050,7 +1044,6 @@ function bindExpandedEvents(note) {
     bindSectionEvents(note, root);
   });
 
-  // Добавить раздел
   root.querySelector('[data-action="add-section"]').addEventListener('click', () => {
     note.sections = note.sections || [];
     note.sections.push({ id: uid(), title: '', content: '' });
@@ -1059,11 +1052,33 @@ function bindExpandedEvents(note) {
     render();
   });
 
+  // Смена блока внутри открытой заметки
+  const blockSel = root.querySelector('[data-block-select]');
+  if (blockSel) {
+    blockSel.addEventListener('change', () => {
+      const newBlock = blockSel.value;
+      note.block = newBlock;
+      note.updatedAt = nowISO();
+      saveToGitHub();
+      showToast('Заметка перемещена в «' + blockName(newBlock) + '»');
+      expandedId = null;
+      expandedSectionQuery = '';
+      render();
+    });
+  }
+
+  // Закрепление в расширенном режиме
+  const pinBtn = root.querySelector('[data-action="pin"]');
+  if (pinBtn) {
+    pinBtn.addEventListener('click', () => {
+      togglePin(note.id);
+    });
+  }
+
   bindSectionEvents(note, root);
 }
 
 function bindSectionEvents(note, root) {
-  // Редактирование названия и текста раздела
   root.querySelectorAll('.section-card').forEach(card => {
     const sid = card.dataset.sectionId;
     const section = (note.sections || []).find(s => s.id === sid);
@@ -1090,7 +1105,6 @@ function bindSectionEvents(note, root) {
       }, 500);
     });
 
-    // Копировать раздел
     card.querySelector('[data-action="copy-section"]').addEventListener('click', async (e) => {
       e.stopPropagation();
       const text = (section.title || 'Без названия') + '\n\n' + (section.content || '');
@@ -1098,7 +1112,6 @@ function bindSectionEvents(note, root) {
         await navigator.clipboard.writeText(text);
         showToast('Раздел скопирован');
       } catch {
-        // fallback для старых браузеров
         const ta = document.createElement('textarea');
         ta.value = text;
         document.body.appendChild(ta);
@@ -1109,7 +1122,6 @@ function bindSectionEvents(note, root) {
       }
     });
 
-    // Удалить раздел
     card.querySelector('[data-action="delete-section"]').addEventListener('click', (e) => {
       e.stopPropagation();
       if (!confirm('Удалить раздел?')) return;
@@ -1221,7 +1233,6 @@ function createSectionInOpenNote() {
   note.updatedAt = nowISO();
   saveToGitHub();
   render();
-  // фокус в последний раздел
   const cards = expandedHost.querySelectorAll('.section-card');
   const last = cards[cards.length - 1];
   if (last) last.querySelector('[data-field="section-title"]').focus();
@@ -1263,7 +1274,6 @@ document.addEventListener('keydown', e => {
   if (data !== null) {
     applyData(data);
   } else {
-    // локальный стартовый набор
     blocks = [{ id: UNSORTED_ID, name: 'Несортированные' }];
     notes = [{
       id: uid(),

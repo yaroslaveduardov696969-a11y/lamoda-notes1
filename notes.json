@@ -63,20 +63,6 @@
   ],
   "notes": [
     {
-      "id": "mx0298pntpp685",
-      "title": "Если ошибка у нас в системе (что то не работает и т.д.), и по БЗ написано, что надо сделать тех заявку, то делаем её по ссылке (проблема в нашем ПО):",
-      "block": "unsorted",
-      "pinned": false,
-      "updatedAt": "2026-11-28T07:00:46.443Z",
-      "sections": [
-        {
-          "id": "mx0298pnql0is5",
-          "title": "Основное",
-          "content": "https://forms.yandex.ru/cloud/6aa6929895add5b54535f112/?page=1\n\nЕсли нужно зафиксировать жалобу на чат-бота (бот пишет некорректно), то делаем заявку по ссылке:\nhttps://forms.yandex.ru/cloud/694e595af47e73ead1954c66/?page=1\n\nКаждый номер заявки (обращение к св, запрос на пересчет %выкупа и т.д.) мы вставляем в коммент в свой чат"
-        }
-      ]
-    },
-    {
       "id": "mwzyf4srbqig6g",
       "title": "Нужные ссылки (за рамки рабочего чата)",
       "block": "b_mwymxkke2upboy",
@@ -568,10 +554,10 @@
     },
     {
       "id": "mwyykynygc2jyd",
-      "title": "Юлино",
+      "title": "",
       "block": "b_mwy809hgxnnyku",
       "pinned": false,
-      "updatedAt": "2026-11-28T06:44:43.328Z",
+      "updatedAt": "2026-11-28T07:21:35.256Z",
       "sections": [
         {
           "id": "mwyykynybkviw1",

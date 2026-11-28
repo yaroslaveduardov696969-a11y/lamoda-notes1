@@ -1454,20 +1454,6 @@
       ]
     },
     {
-      "id": "mwxnrfobpcl4iz",
-      "title": "Перевод на интерфейс",
-      "block": "b_mwymxkke2upboy",
-      "pinned": true,
-      "updatedAt": "2026-11-27T07:04:28.626Z",
-      "sections": [
-        {
-          "id": "mwy7n2fglwgurh",
-          "title": "Основное",
-          "content": "Товар - размер и т.д\nОплата/возврат - (деньги не поступили на р/с), \nПроцент выкупа\nСкидки\nПрименение промокодов "
-        }
-      ]
-    },
-    {
       "id": "mwxnq1x8wr2xnk",
       "title": "Задержка товара+нет переноса",
       "block": "b_mwy809hgxnnyku",
